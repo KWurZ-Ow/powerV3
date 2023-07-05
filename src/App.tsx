@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from 'react';
+import grille  from "./media/grille.png";
+import {createGrid, handleClickOnTile, PathfindGrid} from './Pathfinder';
+import './table.css';
 
-function App() {
+export default function Table() {
+  const [grid, setGrid] = useState(Array<PathfindGrid>)
+  useEffect(() => {
+    setGrid(createGrid())
+  }, [])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="table">
+      <div className='reserves'>
+        <div className="rouge"></div>
+        <div className="bleu"></div>
+        <div className="jaune"></div>
+        <div className="vert"></div>
+      </div>
+      <div className="plateau">
+        <img src={grille} alt="grille" />
+        <div className="pathTest">
+          { grid.map((square) => {
+            let style = {backgroundColor: ""}
+            switch (square.type) {
+              case "cross":
+                style.backgroundColor = "red"
+                break;
+            
+              case "blocked":
+                style.backgroundColor = "grey"
+                break;
+            
+              case "start":
+                style.backgroundColor = "lime"
+                break;
+            
+              case "finish":
+                style.backgroundColor = "purple"
+                break;
+                
+              case "path":
+                style.backgroundColor = "orange"
+                break;
+                
+                default:
+                style.backgroundColor = "cyan"
+                break;
+            }
+            return <div 
+              style={style}
+              onClick={() => handleClickOnTile(square.id, grid, setGrid)}>
+                {square.inside}
+            </div>
+          }) }
+        </div>
+      </div>
+      <div className="ordres"></div>
+      <div className="logs"></div>
     </div>
   );
 }
-
-export default App;

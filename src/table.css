@@ -1,0 +1,75 @@
+.table{
+  height: calc(100vh - 20px);
+  width: calc(100vw - 20px);
+  padding: 10px;
+  background: url("./media/wood.jpg");
+  background-size: cover;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr calc(100vh - 20px) 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+  "a b c"
+  "a b d";
+}
+
+.plateau{
+  grid-area: b;
+  background: url("./media/plateau.jpg");
+  background-size: contain;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+}
+.plateau img{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.reserves{
+  grid-area: a;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reserves div{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+  background-color: white;
+}
+
+.ordres{
+  grid-area: c;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+  background-color: white;
+}
+
+.logs{
+  grid-area: d;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+  background-color: white;
+}
+
+.pathTest{
+  height: 100%;
+  position: relative;
+  top: -100.5%;
+  display: flex;
+  flex-flow: wrap;
+}
+.pathTest div{
+  width: calc(100% / 18);
+  height: calc(100% / 18);
+  opacity: 0.4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
