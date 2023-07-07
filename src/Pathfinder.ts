@@ -1,4 +1,5 @@
 /* eslint-disable no-loop-func */
+import gridCoords from "./grid.json";
 export interface PathfindGrid {
     id: number
     x: number
@@ -8,29 +9,25 @@ export interface PathfindGrid {
     distTo: number
     distFrom: number
     parent: PathfindGrid | null
+    case: string
 }
-type tileType = "normal" | "cross" | "blocked" | "start" | "finish" | "path"
-
-let startTile:PathfindGrid | null
-let finishTile:PathfindGrid | null
-let crossCoords = [2, 7, 10, 15]
-let isInVertCol = (x:number) => ((x > 2 && x < 7) || (x > 10 && x < 15))
-let isInHoriCol = (x:number) => !((x > 1 && x < 8) || (x > 9 && x < 16))
+type tileType = "normal" | "start" | "finish" | "path"
 
 export function createGrid(){
     let grid:Array<PathfindGrid> = []
     
     for (let i = 0; i < 18; i++) {
         for (let j = 0; j < 18; j++) {
-            let type:tileType = (crossCoords.includes(j) && crossCoords.includes(i)) ? "cross" : "normal"
-            if (isInVertCol(j) && isInHoriCol(i)) type = "blocked"
-            if (isInVertCol(i) && isInHoriCol(j)) type = "blocked"
-            grid.push({id: i*18+j, x: j, y:i, type: type, inside: "", distTo: 0, distFrom: 999, parent: null})
+            let id = i*18+j
+            grid.push({id , x: j, y:i, type: "normal", inside: gridCoords[id], distTo: 0, distFrom: 999, parent: null, case: gridCoords[id]})
         }
     }
     console.log('grid', grid)
     return grid
 }
+
+let startTile:PathfindGrid | null
+let finishTile:PathfindGrid | null
 
 export function handleClickOnTile(id: number, grid:Array<PathfindGrid>, setGrid:any) {
     if (!finishTile){
@@ -61,10 +58,17 @@ export function handleClickOnTile(id: number, grid:Array<PathfindGrid>, setGrid:
 
                     //highlight le path
                     let tileBacktracker = finishTile
-                    while (tileBacktracker.parent) {
+                    let caseCrossed = [finishTile.case]
+                    while (tileBacktracker.parent && tileBacktracker.parent.type !== "start") {
                         tileBacktracker.parent.type = "path"
                         tileBacktracker = tileBacktracker.parent
+                        if (tileBacktracker.case !== caseCrossed[caseCrossed.length-1] && tileBacktracker.case !== "xx" && tileBacktracker.case !== startTile.case){
+                            caseCrossed.push(tileBacktracker.case)
+                        }
                     }
+                    console.log(caseCrossed)
+                    //si il y a une ile dans le tableau, elle doit etre à la fin ou au début (une ile max)
+                    //si on est un bateau on a pas le droit d'avoir 2 secteurs maritimes dans le path
                     break
                 }
 
@@ -73,7 +77,7 @@ export function handleClickOnTile(id: number, grid:Array<PathfindGrid>, setGrid:
                 neighbours.forEach((neighbour) => {
 
                     //check si la tile bloquée ou deja calculée
-                    if (neighbour.type === "blocked" || tilesCalculated.includes(neighbour)) return
+                    if ((neighbour.case.includes("s") && !neighbour.case.includes("i")) || tilesCalculated.includes(neighbour)) return
 
                     //set les valeurs de la tile
                     grid[neighbour.id].distTo = getDistance(neighbour, finishTile)

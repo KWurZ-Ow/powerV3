@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import grille  from "./media/grille.png";
+import grille  from "./media/grilleCoords.png";
 import {createGrid, handleClickOnTile, PathfindGrid} from './Pathfinder';
 import './table.css';
 
@@ -21,15 +21,16 @@ export default function Table() {
         <div className="pathTest">
           { grid.map((square) => {
             let style = {backgroundColor: ""}
-            switch (square.type) {
-              case "cross":
-                style.backgroundColor = "red"
-                break;
-            
-              case "blocked":
+            switch (true) {            
+              case square.case.includes("s") && !square.case.includes("i"):
                 style.backgroundColor = "grey"
                 break;
-            
+                
+                default:
+                style.backgroundColor = "cyan"
+                break;
+            }
+            switch (square.type) {            
               case "start":
                 style.backgroundColor = "lime"
                 break;
@@ -40,10 +41,6 @@ export default function Table() {
                 
               case "path":
                 style.backgroundColor = "orange"
-                break;
-                
-                default:
-                style.backgroundColor = "cyan"
                 break;
             }
             return <div 
