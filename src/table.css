@@ -66,8 +66,8 @@
   flex-flow: wrap;
 }
 .pathTest div{
-  width: calc(100% / 18);
-  height: calc(100% / 18);
+  width: calc(100% / 9);
+  height: calc(100% / 9);
   opacity: 0.4;
   display: flex;
   align-items: center;

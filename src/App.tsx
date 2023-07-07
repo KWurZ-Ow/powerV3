@@ -42,6 +42,10 @@ export default function Table() {
               case "path":
                 style.backgroundColor = "orange"
                 break;
+
+              case "explored":
+                style.backgroundColor = "salmon"
+                break;
             }
             return <div 
               style={style}
