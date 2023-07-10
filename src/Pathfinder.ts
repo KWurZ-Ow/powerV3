@@ -25,23 +25,6 @@ export function createGrid(){
     return grid
 }
 
-let startTile:PathfindGrid | null
-let finishTile:PathfindGrid | null
-
-export function handleClickOnTile(id: number, grid:Array<PathfindGrid>, setGrid:any) {
-    if (!finishTile){
-        grid[id].type = !startTile ? "start" : "finish"
-        !startTile ? startTile = grid[id] : finishTile = grid[id]
-        if (finishTile){
-            console.log(computePath(startTile, finishTile, grid))
-        }
-        setGrid([...grid])
-    }else{
-        startTile = finishTile = null
-        setGrid(createGrid())
-    }
-}
-
 export function computePath(startTile:PathfindGrid, finishTile:PathfindGrid, grid:Array<PathfindGrid>){
     startTile.distTo = getDistance(startTile, finishTile)
     startTile.distFrom = 0

@@ -1,29 +1,130 @@
+body{
+  --colorBackgroundMain: rgba(144, 88, 235, 0.24);
+  --colorBackgroundSecond: rgba(209, 209, 209, 0.178);
+  --colorGreenMain: rgb(100, 175, 25);
+  --colorYellowMain: rgb(247, 198, 39);
+  --colorBlueMain: rgb(24, 165, 221);
+  --colorRedMain: red;
+
+  --gridGap: 20px;
+
+  overflow: hidden;
+}
+
 .table{
-  height: calc(100vh - 20px);
-  width: calc(100vw - 20px);
-  padding: 10px;
-  background: url("./media/wood.jpg");
-  background-size: cover;
+  height: calc(100vh - (var(--gridGap)*2));
+  width: calc(100vw - (var(--gridGap)*2));
+  padding: var(--gridGap);
   display: grid;
-  gap: 10px;
-  grid-template-columns: 1fr calc(100vh - 20px) 1fr;
+  gap: var(--gridGap);
+  grid-template-columns: 2fr calc(100vh - (var(--gridGap)*2)) 3fr;
   grid-template-rows: 1fr 1fr;
   grid-template-areas: 
   "a b c"
   "a b d";
 }
 
+.table::after{
+  content: "";
+  background: url("./media/bg.jpg");
+  filter: blur(10px);
+  position: absolute;
+  top: -10vh;
+  left: -10vh;
+  width: 120vw;
+  height: 120vh;
+  z-index: -1;
+  background-size: cover;
+}
+
+.menuToggeler{
+  width: 2vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.menuToggeler.closed{
+  width: 100vw;
+}
+
+.menu{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100vh - 30px);
+  width: 23vw;
+  background-color: var(--colorBackgroundSecond);
+  color: white;
+  border-radius: 0 10px 10px 0; 
+  box-shadow: rgba(0, 0, 0, 0.726) 5px 5px 15px;
+  transition: transform 0.3s ease-in-out;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.menu.closed{
+  transform: translateX(-101%);
+}
+.menu table, .menu th, .menu td {
+  border-collapse: collapse;
+  border: 1px solid white;
+  text-align: center;
+}
+
+.menu input{
+  width: 90%;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border: none;
+}
+
+.menu .radio{
+  border: none;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 5px 0 5px;
+}
+
+.menu .radio input{
+  display: none;
+}
+.menu .radio label{
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  border: 0.5px solid black;
+  transition: 0.3s;
+}
+.menu .radio input:checked + label{
+  box-shadow: inset black 1px 1px 4px;
+}
+.menu .radio label:nth-of-type(1){
+  background-color: var(--colorGreenMain);
+}
+.menu .radio label:nth-of-type(2){
+  background-color: var(--colorBlueMain);
+}
+.menu .radio label:nth-of-type(3){
+  background-color: var(--colorYellowMain);
+}
+.menu .radio label:nth-of-type(4){
+  background-color: var(--colorRedMain);
+}
+
 .plateau{
   grid-area: b;
   background: url("./media/plateau.jpg");
   background-size: contain;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+  border-radius: 20px;
 }
 .plateau img{
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 20px;
 }
 
 .reserves{
@@ -35,41 +136,49 @@
 .reserves div{
   width: 100%;
   height: 100%;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
-  background-color: white;
+  border-radius: 20px;
+  background-color: var(--colorBackgroundMain);
 }
 
 .ordres{
   grid-area: c;
-  width: 100%;
   height: 100%;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
-  background-color: white;
+  width: 100%;
+  border-radius: 20px;
+  background-color: var(--colorBackgroundMain);
 }
 
-.logs{
+.logContainer{
   grid-area: d;
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.637) 5px 5px 15px;
+  height: calc(100% - 20px);
+  border-radius: 20px;
+  background-color: var(--colorBackgroundMain);
+  color: white;
+  overflow-y: scroll;
+  padding: 10px;
+}
+.log::after{
+  content: "";
+  display: block;
+  width: 30px;
+  height: 1px;
   background-color: white;
+  margin: 5px auto 5px auto;
 }
-
-.pathTest{
-  height: 100%;
-  position: relative;
-  top: -100.5%;
-  display: flex;
-  flex-flow: wrap;
+.log.green{
+  color: var(--colorGreenMain);
 }
-.pathTest div{
-  width: calc(100% / 9);
-  height: calc(100% / 9);
-  opacity: 0.4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.log.blue{
+  color: var(--colorBlueMain);
+}
+.log.yellow{
+  color: var(--colorYellowMain);
+}
+.log.red{
+  color: var(--colorRedMain);
+}
+.log.grey{
+  color: rgb(71, 71, 71);
+  text-align: center;
+  font-style: italic;
 }
