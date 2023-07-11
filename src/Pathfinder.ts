@@ -4,14 +4,14 @@ export interface PathfindGrid {
     id: number
     x: number
     y: number
-    type: tileType
+    type: TileType
     inside: string
     distTo: number
     distFrom: number
     parent: PathfindGrid | null
     case: string
 }
-type tileType = "normal" | "start" | "finish" | "path" | "explored"
+type TileType = "normal" | "start" | "finish" | "path" | "explored"
 
 export function createGrid(){
     let grid:Array<PathfindGrid> = []
@@ -85,7 +85,7 @@ export function computePath(startTile:PathfindGrid, finishTile:PathfindGrid, gri
     }
 }
 
-function getDistance(start:any, finish:any){
+function getDistance(start:PathfindGrid, finish:PathfindGrid){
     const dx = finish.x - start.x;
     const dy = finish.y - start.y;
     return Math.round(Math.sqrt(dx * dx + dy * dy)*10)

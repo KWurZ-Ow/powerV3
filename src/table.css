@@ -1,30 +1,32 @@
-body{
+body {
   --colorBackgroundMain: rgba(144, 88, 235, 0.24);
   --colorBackgroundSecond: rgba(209, 209, 209, 0.178);
   --colorGreenMain: rgb(100, 175, 25);
   --colorYellowMain: rgb(247, 198, 39);
   --colorBlueMain: rgb(24, 165, 221);
   --colorRedMain: red;
+  --colorGreyMain: grey;
+  --colorGreySec: rgb(90, 90, 90);
 
   --gridGap: 20px;
 
   overflow: hidden;
 }
 
-.table{
-  height: calc(100vh - (var(--gridGap)*2));
-  width: calc(100vw - (var(--gridGap)*2));
+.table {
+  height: calc(100vh - (var(--gridGap) * 2));
+  width: calc(100vw - (var(--gridGap) * 2));
   padding: var(--gridGap);
   display: grid;
   gap: var(--gridGap);
-  grid-template-columns: 2fr calc(100vh - (var(--gridGap)*2)) 3fr;
+  grid-template-columns: 2fr calc(100vh - (var(--gridGap) * 2)) 3fr;
   grid-template-rows: 1fr 1fr;
-  grid-template-areas: 
-  "a b c"
-  "a b d";
+  grid-template-areas:
+    "a b c"
+    "a b d";
 }
 
-.table::after{
+.table::after {
   content: "";
   background: url("./media/bg.jpg");
   filter: blur(10px);
@@ -37,7 +39,7 @@ body{
   background-size: cover;
 }
 
-.menuToggeler{
+.menuToggeler {
   width: 2vw;
   height: 100vh;
   position: absolute;
@@ -45,11 +47,11 @@ body{
   left: 0;
 }
 
-.menuToggeler.closed{
+.menuToggeler.closed {
   width: 100vw;
 }
 
-.menu{
+.menu {
   position: absolute;
   top: 0;
   left: 0;
@@ -57,90 +59,106 @@ body{
   width: 23vw;
   background-color: var(--colorBackgroundSecond);
   color: white;
-  border-radius: 0 10px 10px 0; 
+  border-radius: 0 10px 10px 0;
   box-shadow: rgba(0, 0, 0, 0.726) 5px 5px 15px;
   transition: transform 0.3s ease-in-out;
   padding: 15px;
   backdrop-filter: blur(10px);
 }
 
-.menu.closed{
+.menu.closed {
   transform: translateX(-101%);
 }
-.menu table, .menu th, .menu td {
+
+.menu table{
+  border-radius: 10px;
+  width: 100%;
+}
+.menu table{
   border-collapse: collapse;
-  border: 1px solid white;
   text-align: center;
+  background-color: var(--colorBackgroundSecond);
+}
+.menu tr{
+  height: 30px;
+}
+.menu tr:nth-child(odd){
+  background-color: var(--colorBackgroundSecond);
 }
 
-.menu input{
+.menu tr:first-child th:first-child { border-top-left-radius: 10px; }
+.menu tr:first-child th:last-child { border-top-right-radius: 10px; }
+.menu tr:last-child td:first-child { border-bottom-left-radius: 10px; }
+.menu tr:last-child td:last-child { border-bottom-right-radius: 10px; }
+
+.menu input {
   width: 90%;
   background-color: rgba(0, 0, 0, 0);
   color: white;
   border: none;
 }
 
-.menu .radio{
+.menu .radio {
   border: none;
-  height: 26px;
+  height: 40px;
   display: flex;
   align-items: center;
   gap: 5px;
   padding: 0 5px 0 5px;
 }
 
-.menu .radio input{
+.menu .radio input {
   display: none;
 }
-.menu .radio label{
+.menu .radio label {
   width: 20px;
   height: 20px;
   border-radius: 2px;
   border: 0.5px solid black;
   transition: 0.3s;
 }
-.menu .radio input:checked + label{
+.menu .radio input:checked + label {
   box-shadow: inset black 1px 1px 4px;
 }
-.menu .radio label:nth-of-type(1){
+.menu .radio label:nth-of-type(1) {
   background-color: var(--colorGreenMain);
 }
-.menu .radio label:nth-of-type(2){
+.menu .radio label:nth-of-type(2) {
   background-color: var(--colorBlueMain);
 }
-.menu .radio label:nth-of-type(3){
+.menu .radio label:nth-of-type(3) {
   background-color: var(--colorYellowMain);
 }
-.menu .radio label:nth-of-type(4){
+.menu .radio label:nth-of-type(4) {
   background-color: var(--colorRedMain);
 }
 
-.plateau{
+.plateau {
   grid-area: b;
   background: url("./media/plateau.jpg");
   background-size: contain;
   border-radius: 20px;
 }
-.plateau img{
+.plateau img {
   width: 100%;
   height: 100%;
   border-radius: 20px;
 }
 
-.reserves{
+.reserves {
   grid-area: a;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.reserves div{
+.reserves div {
   width: 100%;
   height: 100%;
   border-radius: 20px;
   background-color: var(--colorBackgroundMain);
 }
 
-.ordres{
+.orders {
   grid-area: c;
   height: 100%;
   width: 100%;
@@ -148,37 +166,49 @@ body{
   background-color: var(--colorBackgroundMain);
 }
 
-.logContainer{
+.logContainer {
   grid-area: d;
   height: calc(100% - 20px);
   border-radius: 20px;
   background-color: var(--colorBackgroundMain);
   color: white;
   overflow-y: scroll;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--colorGreyMain);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--colorGreySec);
+}
+.log{
   padding: 10px;
 }
-.log::after{
-  content: "";
-  display: block;
-  width: 30px;
-  height: 1px;
-  background-color: white;
-  margin: 5px auto 5px auto;
+.log:nth-child(even){
+  background-color: var(--colorBackgroundSecond);
 }
-.log.green{
+.log.green {
   color: var(--colorGreenMain);
 }
-.log.blue{
+.log.blue {
   color: var(--colorBlueMain);
 }
-.log.yellow{
+.log.yellow {
   color: var(--colorYellowMain);
 }
-.log.red{
+.log.red {
   color: var(--colorRedMain);
 }
-.log.grey{
-  color: rgb(71, 71, 71);
+.log.grey {
+  color: var(--colorGreyMain);
   text-align: center;
   font-style: italic;
 }

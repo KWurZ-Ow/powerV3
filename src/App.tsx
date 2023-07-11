@@ -2,27 +2,48 @@ import { useEffect, useRef, useState } from "react";
 import grille from "./media/grilleCoords.png";
 import { createGrid } from "./Pathfinder";
 import "./table.css";
-import handleOrdre from "./OrdresHandeling";
-export interface piece {
-  color: colorType;
-  type: pieceType;
-  case:
-    | `${"V" | "B" | "J" | "R" | "S"}${number | "HQ"}`
-    | `I${"X" | "N" | "S" | "E" | "W"}`;
+import CheckOrder from "./OrdersChecking";
+import executeOrder from "./OrdersHandeling";
+
+type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+type NineToTwelve = 9 | 10 | 11 | 12;
+export type CaseType =
+  | `${"V" | "B" | "J" | "R"}${0 | OneToHeight | "HQ"}`
+  | `S${OneToHeight | NineToTwelve}`
+  | `I${"X" | "N" | "S" | "E" | "W"}`;
+
+export interface PieceItemType {
+  color: ColorType;
+  type: PieceType;
+  case: CaseType;
 }
 
-type colorType = "green" | "blue" | "yellow" | "red";
-type pieceType = "S" | "T" | "C" | "D" | "R" | "A" | "B" | "CR";
+export type ColorType = "green" | "blue" | "yellow" | "red";
+export type PieceType = "S" | "T" | "C" | "D" | "R" | "A" | "B" | "CR";
 
 export default function Table() {
   const [logs, setLogs] = useState([
-    `Début de la partie le ${new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })}`,
+    `Début de la partie le ${new Date().toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })}`,
   ]);
-  const [pieces, setPieces] = useState<Array<piece>>([
+  const [pieces, setPieces] = useState<Array<PieceItemType>>([
     {
       color: "blue",
       type: "R",
-      case: "IN",
+      case: "J0",
+    },
+    {
+      color: "red",
+      type: "A",
+      case: "J4",
+    },
+    {
+      color: "red",
+      type: "A",
+      case: "J4",
     },
   ]);
   const [isMenuToggeled, setIsMenuToggeled] = useState(false);
@@ -37,17 +58,22 @@ export default function Table() {
   const [debugFinish, setDebugFinish] = useState("");
   const firstInputRef = useRef<HTMLInputElement>(null);
 
-  function handleDebugOrdre() {
+  function handleDebugOrder() {
     setDebugPiece("");
     setDebugStart("");
     setDebugFinish("");
+    const order = CheckOrder(debugColor, debugPiece, debugStart, debugFinish);
+    if (typeof order === "object") {
+      executeOrder(order, pieces)
+      setLogs(
+        logs.concat(
+          `Order : ${order.color}, ${order.piece}, ${order.start}, ${order.finish}`
+        )
+      );
+    } else {
+      console.error(order);
+    }
     firstInputRef.current!.focus();
-    handleOrdre(debugColor, debugPiece, debugStart, debugFinish);
-    setLogs(
-      logs.concat(
-        `Ordre : ${debugColor}, ${debugPiece}, ${debugStart}, ${debugFinish}`
-      )
-    );
   }
 
   return (
@@ -58,17 +84,15 @@ export default function Table() {
       ></div>
       <div className={`menu ${isMenuToggeled && "closed"}`}>
         <h2>Débug</h2>
-        <div className="logOrdres">
+        <div className="logOrders">
           <table>
-            <thead>
+            <tbody>
               <tr>
                 <th>Couleur</th>
                 <th>Pièce</th>
                 <th>Départ</th>
                 <th>Arrivée</th>
               </tr>
-            </thead>
-            <tbody>
               <tr>
                 <td
                   className="radio"
@@ -101,7 +125,7 @@ export default function Table() {
                     value={debugPiece}
                     ref={firstInputRef}
                     onChange={(e) => {
-                      setDebugPiece(e.target.value);
+                      setDebugPiece(e.target.value.toUpperCase());
                     }}
                   />
                 </td>
@@ -110,7 +134,7 @@ export default function Table() {
                     type="text"
                     value={debugStart}
                     onChange={(e) => {
-                      setDebugStart(e.target.value);
+                      setDebugStart(e.target.value.toUpperCase());
                     }}
                   />
                 </td>
@@ -119,10 +143,14 @@ export default function Table() {
                     type="text"
                     value={debugFinish}
                     onChange={(e) => {
-                      setDebugFinish(e.target.value);
+                      setDebugFinish(e.target.value.toUpperCase());
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === "Enter") handleDebugOrdre();
+                      if (e.key === "Enter") handleDebugOrder();
+                      if (e.key === "Tab") {
+                        e.preventDefault();
+                        firstInputRef.current!.focus();
+                      }
                     }}
                   />
                 </td>
@@ -157,7 +185,7 @@ export default function Table() {
       <div className="plateau">
         <img src={grille} alt="grille" />
       </div>
-      <div className="ordres"></div>
+      <div className="orders"></div>
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}
         {logs.map((log) => (
