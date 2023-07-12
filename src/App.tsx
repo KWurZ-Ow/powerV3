@@ -66,8 +66,8 @@ export default function Table() {
     if (typeof order === "object") {
       executeOrder(order, pieces)
       setLogs(
-        logs.concat(
-          `Order : ${order.color}, ${order.piece}, ${order.start}, ${order.finish}`
+        [`Déplacement d'un ${order.piece} ${order.color} de ${order.start} à ${order.finish}`].concat(
+          logs
         )
       );
     } else {
