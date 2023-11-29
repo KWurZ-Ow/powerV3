@@ -1,0 +1,16 @@
+{
+    "S": "soldat",
+    "T" : "tank",
+    "C" : "chasseur",
+    "D" : "destroyer",
+    "R" : "régiment",
+    "A" : "char d'assaut",
+    "B" : "bombardier",
+    "CR" : "croiseur",
+    "M" : "MEGA MISSILE",
+    "P" : "power",
+    "green" : "vert",
+    "blue" : "bleu",
+    "yellow" : "jaune",
+    "red" : "rouge"
+}

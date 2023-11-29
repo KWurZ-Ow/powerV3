@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import grille from "./media/grilleCoords.png";
-import { createGrid } from "./Pathfinder";
 import "./table.css";
 import CheckOrder from "./OrdersChecking";
 import executeOrder from "./OrdersHandeling";
+import names from "./names.json"
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type NineToTwelve = 9 | 10 | 11 | 12;
@@ -20,16 +20,24 @@ export interface PieceItemType {
 
 export type ColorType = "green" | "blue" | "yellow" | "red";
 export type PieceType = "S" | "T" | "C" | "D" | "R" | "A" | "B" | "CR";
+export type NameType = PieceType | ColorType
 
+export function convertName(name: NameType) {
+  if (name in names) {
+    return names[name]
+  } else {
+    return name
+  }
+}
 export default function Table() {
   const [logs, setLogs] = useState([
     `Début de la partie le ${new Date().toLocaleDateString("fr-FR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    })}`,
+    })} à ${new Date().toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}`,
   ]);
-  const [pieces, setPieces] = useState<Array<PieceItemType>>([
+  const [pieces] = useState<Array<PieceItemType>>([
     {
       color: "blue",
       type: "R",
@@ -42,14 +50,13 @@ export default function Table() {
     },
     {
       color: "red",
-      type: "A",
-      case: "J4",
+      type: "CR",
+      case: "S12",
     },
   ]);
   const [isMenuToggeled, setIsMenuToggeled] = useState(false);
-  useEffect(() => {
-    createGrid();
-  }, []);
+
+  const [debugErrorMessage, setDebugErrorMessage] = useState<string | null>();
 
   //debug inputs
   const [debugColor, setDebugColor] = useState("");
@@ -62,16 +69,25 @@ export default function Table() {
     setDebugPiece("");
     setDebugStart("");
     setDebugFinish("");
-    const order = CheckOrder(debugColor, debugPiece, debugStart, debugFinish);
-    if (typeof order === "object") {
-      executeOrder(order, pieces)
+    try {
+      console.log(`=== Ordre de débug envoyé : ${debugColor} | ${debugPiece} | ${debugStart} | ${debugFinish} ===`)
+      const order = CheckOrder(debugColor, debugPiece.trim(), debugStart.trim(), debugFinish.trim());
+      executeOrder(order, pieces);
+
       setLogs(
-        [`Déplacement d'un ${order.piece} ${order.color} de ${order.start} à ${order.finish}`].concat(
-          logs
-        )
+        [
+          `Déplacement d'un ${convertName(order.piece)} ${convertName(order.color)} de ${order.start} à ${order.finish}`,
+        ].concat(logs)
       );
-    } else {
-      console.error(order);
+    } catch (error: any) {
+      if (error.name === "CheckingError") console.log("Ordre incorrect ❌")
+      if (error.name === "HandelingError") console.log("Ordre refusé ❌")
+      console.error(error.message);
+      console.error(error.stack)
+      setDebugErrorMessage(error.message)
+      setTimeout(() => {
+        setDebugErrorMessage(null)
+      }, 3000);
     }
     firstInputRef.current!.focus();
   }
@@ -85,6 +101,7 @@ export default function Table() {
       <div className={`menu ${isMenuToggeled && "closed"}`}>
         <h2>Débug</h2>
         <div className="logOrders">
+          <div className={`errorBubble ${debugErrorMessage && "active"}`}>{debugErrorMessage}</div>
           <table>
             <tbody>
               <tr>
@@ -166,8 +183,8 @@ export default function Table() {
               <th>Type</th>
               <th>Case</th>
             </tr>
-            {pieces.map((piece) => (
-              <tr>
+            {pieces.map((piece, i) => (
+              <tr key={i}>
                 <td>{piece.color}</td>
                 <td>{piece.type}</td>
                 <td>{piece.case}</td>

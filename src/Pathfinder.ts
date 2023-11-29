@@ -1,31 +1,45 @@
-/* eslint-disable no-loop-func */
+import { CaseType } from "./App";
 import gridCoords from "./grid.json";
 export interface PathfindGrid {
     id: number
     x: number
     y: number
     type: TileType
-    inside: string
     distTo: number
     distFrom: number
     parent: PathfindGrid | null
     case: string
 }
-type TileType = "normal" | "start" | "finish" | "path" | "explored"
+type TileType = "normal" | "start" | "finish" | "path" | "explored" | "forbidden"
+let grid:Array<PathfindGrid> = []
 
-export function createGrid(){
-    let grid:Array<PathfindGrid> = []
-    
+function createGrid(isWaterType:boolean){
+    grid = []
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
             let id = i*9+j
-            grid.push({id , x: j, y:i, type: "normal", inside: gridCoords[id], distTo: 0, distFrom: 999, parent: null, case: gridCoords[id]})
+            let type:TileType = "normal"
+            if (isWaterType){
+                if (gridCoords[id].match(/[VBJR]4/)) type = "forbidden"
+            }else{
+                if (gridCoords[id].match(/^S/)) type = "forbidden"
+            }
+            grid.push({id , x: j, y:i, type: type, distTo: 0, distFrom: 999, parent: null, case: gridCoords[id]})
         }
     }
-    return grid
+    console.log('grid', grid)
 }
 
-export function computePath(startTile:PathfindGrid, finishTile:PathfindGrid, grid:Array<PathfindGrid>){
+function caseToGridTile(tile:CaseType):PathfindGrid{
+    return grid.find(object => object.case === tile)!
+}
+
+export function computePath(start:CaseType, finish:CaseType, isWaterType:boolean){
+    createGrid(isWaterType)
+    let startTile:PathfindGrid = caseToGridTile(start)
+    let finishTile:PathfindGrid = caseToGridTile(finish)
+    grid[finishTile.id].type = "finish"
+    grid[startTile.id].type = "start"
     startTile.distTo = getDistance(startTile, finishTile)
     startTile.distFrom = 0
     let tilesToCalculate:Array<PathfindGrid> = [startTile!]
@@ -34,7 +48,7 @@ export function computePath(startTile:PathfindGrid, finishTile:PathfindGrid, gri
         //trouver la tuile avec le plus petit coût
         let currentTile:PathfindGrid = tilesToCalculate[0]
         tilesToCalculate.forEach((tile) => {
-            if (tile.distTo + tile.distFrom < currentTile.distFrom + currentTile.distTo){
+            if (tile.distTo + tile.distFrom < currentTile.distFrom + currentTile.distTo && tile.type !== "forbidden"){
                 currentTile = tile
             }
         })
@@ -66,6 +80,7 @@ export function computePath(startTile:PathfindGrid, finishTile:PathfindGrid, gri
     
         //loop sur les voisins
         let neighbours = getneighbours(currentTile.x, currentTile.y, grid)
+        // eslint-disable-next-line no-loop-func
         neighbours.forEach((neighbour) => {
     
             //check si la tile bloquée ou deja calculée

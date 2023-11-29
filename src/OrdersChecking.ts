@@ -5,20 +5,31 @@ export type OrderType = {
     start: CaseType,
     finish: CaseType
 }
-type Error = `Case inexistante "${string}"` | `Piece inexistante "${string}"` | "Chaipafaire"
+class CheckingError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'CheckingError';
+    }
+}
 
-const isPiece = (item:string):PieceType => item === ("S" || "T" || "C" || "D" || "R" || "A" || "B" || "CR") ? item : "A"
-const isCase = (item:string) => item.match(/^(([VJBR]([0-8]||HQ))||(S([1-9]|1[0-2]))||(I[XNSEW]))$/)
+const isPiece = (item: string): boolean => ["S", "T", "C", "D", "R", "A", "B", "CR"].includes(item)
+const isCase = (item: string) => item.match(/^(([VJBR]([0-8]||HQ))||(S([1-9]|1[0-2]))||(I[XNSEW]))$/)
 
-export default function CheckOrder(color:string, piece:string, start:string, finish:string):Error | OrderType{
-    if(start.charAt(0) === "E"){//type d'order = échange de pièces
-        return "Chaipafaire"
+export default function CheckOrder(color: string, piece: string, start: string, finish: string): OrderType {
+    if (!piece || !start || !finish) throw new CheckingError(`Un des champs n'est pas renseigné`)
+    if (start.charAt(0) === "E") {
+        //type d'ordre = échange de pièces
 
-    }else{//type d'order = déplacement de pièces
-        if (!isPiece(piece)) return `Piece inexistante "${piece}"`
-        if (!isCase(start)) return `Case inexistante "${start}"`
-        if (!isCase(finish)) return `Case inexistante "${finish}"`
+        throw new CheckingError("Chaipafaire")
 
-        return {color: color as ColorType, piece: piece as PieceType, start: start as CaseType, finish: finish as CaseType}
+    } else {
+        //type d'ordre = déplacement de pièces
+
+        if (!isPiece(piece)) throw new CheckingError(`Piece inexistante "${piece}"`)
+        if (!isCase(start)) throw new CheckingError(`Case inexistante "${start}"`)
+        if (!isCase(finish)) throw new CheckingError(`Case inexistante "${finish}"`)
+
+        console.log("Ordre correct ✅")
+        return { color: color as ColorType, piece: piece as PieceType, start: start as CaseType, finish: finish as CaseType }
     }
 }

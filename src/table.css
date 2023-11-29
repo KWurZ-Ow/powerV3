@@ -7,6 +7,7 @@ body {
   --colorRedMain: red;
   --colorGreyMain: grey;
   --colorGreySec: rgb(90, 90, 90);
+  --colorErrorBackground: rgba(253, 8, 0, 0.205);
 
   --gridGap: 20px;
 
@@ -64,6 +65,22 @@ body {
   transition: transform 0.3s ease-in-out;
   padding: 15px;
   backdrop-filter: blur(10px);
+}
+
+.menu .errorBubble{
+  position: absolute;
+  right: 15px;
+  padding: 5px;
+  max-width: 353px;
+  border-radius: 10px;
+  background-color: transparent;
+  opacity: 0;
+  transition: background-color 0s, opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.menu .errorBubble.active{
+  transform: translateY(-35px);
+  background-color: var(--colorErrorBackground);
+  opacity: 1;
 }
 
 .menu.closed {
