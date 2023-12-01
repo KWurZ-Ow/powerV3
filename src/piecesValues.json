@@ -1,0 +1,42 @@
+{
+    "S": {
+        "range": 2,
+        "power" : 2,
+        "group" : 1
+    },
+    "T": {
+        "range": 3,
+        "power" : 3,
+        "group" : 1
+    },
+    "C": {
+        "range": 5,
+        "power" : 5,
+        "group" : 1
+    },
+    "D": {
+        "range": 1,
+        "power" : 10,
+        "group" : 1
+    },
+    "R": {
+        "range": 2,
+        "power" : 20,
+        "group" : 2
+    },
+    "A": {
+        "range": 3,
+        "power" : 30,
+        "group" : 2
+    },
+    "B": {
+        "range": 5,
+        "power" : 25,
+        "group" : 2
+    },
+    "CR": {
+        "range": 1,
+        "power" : 50,
+        "group" : 2
+    }
+}

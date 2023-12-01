@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import { CaseType } from "./App";
 import gridCoords from "./grid.json";
 export interface PathfindGrid {
@@ -11,87 +12,76 @@ export interface PathfindGrid {
     case: string
 }
 type TileType = "normal" | "start" | "finish" | "path" | "explored" | "forbidden"
-let grid:Array<PathfindGrid> = []
+let grid: Array<PathfindGrid> = []
 
-function createGrid(isWaterType:boolean){
+function createGrid(isWaterType: boolean) {
     grid = []
     for (let i = 0; i < 9; i++) {
         for (let j = 0; j < 9; j++) {
-            let id = i*9+j
-            let type:TileType = "normal"
-            if (isWaterType){
+            let id = i * 9 + j
+            let type: TileType = "normal"
+            if (isWaterType) {
                 if (gridCoords[id].match(/[VBJR]4/)) type = "forbidden"
-            }else{
+            } else {
                 if (gridCoords[id].match(/^S/)) type = "forbidden"
             }
-            grid.push({id , x: j, y:i, type: type, distTo: 0, distFrom: 999, parent: null, case: gridCoords[id]})
+            grid.push({ id, x: j, y: i, type: type, distTo: 0, distFrom: 999, parent: null, case: gridCoords[id] })
         }
     }
-    console.log('grid', grid)
 }
 
-function caseToGridTile(tile:CaseType):PathfindGrid{
-    return grid.find(object => object.case === tile)!
+function caseToGridTile(tile: CaseType): Array<PathfindGrid> {
+    return grid.filter(object => object.case === tile)!
 }
 
-export function computePath(start:CaseType, finish:CaseType, isWaterType:boolean){
+export function computePath(start: CaseType, finish: CaseType, isWaterType: boolean) {
     createGrid(isWaterType)
-    let startTile:PathfindGrid = caseToGridTile(start)
-    let finishTile:PathfindGrid = caseToGridTile(finish)
-    grid[finishTile.id].type = "finish"
-    grid[startTile.id].type = "start"
+    let startTile: PathfindGrid = caseToGridTile(start)[0]
+    let finishTile: PathfindGrid = caseToGridTile(finish)[0]
+    // grid[finishTile.id].type = "finish"
+    // grid[startTile.id].type = "start"
     startTile.distTo = getDistance(startTile, finishTile)
     startTile.distFrom = 0
-    let tilesToCalculate:Array<PathfindGrid> = [startTile!]
-    let tilesCalculated:Array<PathfindGrid> = []
+    let tilesToCalculate: Array<PathfindGrid> = [startTile!]
+    let tilesCalculated: Array<PathfindGrid> = []
     while (true) {
         //trouver la tuile avec le plus petit coût
-        let currentTile:PathfindGrid = tilesToCalculate[0]
+        let currentTile: PathfindGrid = tilesToCalculate[0]
         tilesToCalculate.forEach((tile) => {
-            if (tile.distTo + tile.distFrom < currentTile.distFrom + currentTile.distTo && tile.type !== "forbidden"){
+            if (tile.distTo + tile.distFrom < currentTile.distFrom + currentTile.distTo && tile.type !== "forbidden") {
                 currentTile = tile
             }
         })
-        
+
         //changer current de liste
         tilesToCalculate.splice(tilesToCalculate.indexOf(currentTile), 1)
         tilesCalculated.push(currentTile)
-    
-        //check si on a fini
-        if (currentTile.type === "finish"){
-    
-            //highlight la recherche
-            // tilesCalculated.forEach((tile) => {
-            //     tile.type = "explored"
-            // })
 
+        //check si on a fini
+        if (currentTile.case === finishTile.case) {
             //highlight le path et l'enregistrer
             let tileBacktracker = finishTile
-            let caseCrossed = [finishTile.parent?.case]
-            while (tileBacktracker.parent && tileBacktracker.parent.type !== "start") {
-                tileBacktracker.parent.type = "path"
+            let caseCrossed: Array<string> = []
+            while (tileBacktracker.parent && tileBacktracker.parent.case !== startTile.case) {
                 tileBacktracker = tileBacktracker.parent
-                if (tileBacktracker.case !== caseCrossed[caseCrossed.length-1] && tileBacktracker.case !== "xx" && tileBacktracker.case !== startTile.case){
-                    caseCrossed.unshift(tileBacktracker.case)
-                }
+                caseCrossed.unshift(tileBacktracker.case)
             }
             return caseCrossed
         }
-    
+
         //loop sur les voisins
-        let neighbours = getneighbours(currentTile.x, currentTile.y, grid)
-        // eslint-disable-next-line no-loop-func
+        let neighbours = getNeighbours(currentTile.x, currentTile.y, grid)
         neighbours.forEach((neighbour) => {
-    
+
             //check si la tile bloquée ou deja calculée
             if ((neighbour.case.includes("s") && !neighbour.case.includes("i")) || tilesCalculated.includes(neighbour)) return
-    
+
             //set les valeurs de la tile
             grid[neighbour.id].distTo = getDistance(neighbour, finishTile)
             let newDistFrom = getDistance(currentTile, neighbour) + currentTile.distFrom
-    
+
             //check si on la prends
-            if (newDistFrom < neighbour.distFrom || !tilesToCalculate.includes(neighbour)){
+            if (newDistFrom < neighbour.distFrom || !tilesToCalculate.includes(neighbour)) {
                 grid[neighbour.id].distFrom = newDistFrom
                 grid[neighbour.id].parent = currentTile
                 if (!tilesToCalculate.includes(neighbour)) tilesToCalculate.push(neighbour)
@@ -100,23 +90,35 @@ export function computePath(start:CaseType, finish:CaseType, isWaterType:boolean
     }
 }
 
-function getDistance(start:PathfindGrid, finish:PathfindGrid){
+function getDistance(start: PathfindGrid, finish: PathfindGrid) {
     const dx = finish.x - start.x;
     const dy = finish.y - start.y;
-    return Math.round(Math.sqrt(dx * dx + dy * dy)*10)
+    return Math.round(Math.sqrt(dx * dx + dy * dy) * 10)
 }
 
-function getneighbours(x:number, y:number, grid:Array<PathfindGrid>){
+function getNeighbours(x: number, y: number, grid: Array<PathfindGrid>) {
     let coords = [
-        {x: x-1, y: y+1}, {x: x, y: y+1}, {x: x+1, y: y+1},
-        {x: x-1, y: y},                   {x: x+1, y: y},
-        {x: x-1, y: y-1}, {x: x, y: y-1}, {x: x+1, y: y-1}
+        { x: x - 1, y: y + 1 }, { x: x, y: y + 1 }, { x: x + 1, y: y + 1 },
+        { x: x - 1, y: y }, { x: x + 1, y: y },
+        { x: x - 1, y: y - 1 }, { x: x, y: y - 1 }, { x: x + 1, y: y - 1 }
     ]
 
-    let rez:Array<PathfindGrid> = []
+    let rez: Array<PathfindGrid> = []
     coords.forEach((coord) => {
         let item = grid.find(item => item.x === coord.x && item.y === coord.y)
         if (item) rez.push(item)
     })
     return rez
+}
+
+export function getAllNeighbours(center:CaseType){
+    let centerTiles = caseToGridTile(center)
+    createGrid(true)
+    let neighbours:Array<PathfindGrid> = []
+    centerTiles.forEach(tile => {
+        neighbours = neighbours.concat(getNeighbours(tile.x, tile.y, grid).filter(item => !neighbours.includes(item)))
+    });
+    return neighbours.map((tile) => {
+        return(tile.case);  
+    })
 }

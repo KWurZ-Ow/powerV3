@@ -70,7 +70,7 @@ export default function Table() {
     setDebugStart("");
     setDebugFinish("");
     try {
-      console.log(`=== Ordre de débug envoyé : ${debugColor} | ${debugPiece} | ${debugStart} | ${debugFinish} ===`)
+      console.log(`%c === Ordre de débug envoyé : ${debugColor} | ${debugPiece} | ${debugStart} | ${debugFinish} ===`, 'background: #666')
       const order = CheckOrder(debugColor, debugPiece.trim(), debugStart.trim(), debugFinish.trim());
       executeOrder(order, pieces);
 
@@ -83,7 +83,7 @@ export default function Table() {
       if (error.name === "CheckingError") console.log("Ordre incorrect ❌")
       if (error.name === "HandelingError") console.log("Ordre refusé ❌")
       console.error(error.message);
-      console.error(error.stack)
+      // console.error(error.stack)
       setDebugErrorMessage(error.message)
       setTimeout(() => {
         setDebugErrorMessage(null)
