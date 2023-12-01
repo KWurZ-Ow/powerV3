@@ -66,7 +66,7 @@ export function computePath(start: CaseType, finish: CaseType, isWaterType: bool
                 tileBacktracker = tileBacktracker.parent
                 caseCrossed.unshift(tileBacktracker.case)
             }
-            return caseCrossed
+            return caseCrossed as Array<CaseType>
         }
 
         //loop sur les voisins

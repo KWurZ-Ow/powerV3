@@ -1,4 +1,4 @@
-import { PieceItemType, convertName } from "./App";
+import { CaseType, PieceItemType, convertName } from "./App";
 import { OrderType } from "./OrdersChecking";
 import { computePath, getAllNeighbours } from "./Pathfinder";
 import piecesValues from "./piecesValues.json"
@@ -26,16 +26,15 @@ export default function authorizeOrder(order: OrderType, pieces: Array<PieceItem
     }
     if (order.start === order.finish) throw new AuthorizingError(`On ne peut pas se déplacer de 0 cases !`)
 
-
-
     //😱 pathfinding
+    let path:Array<CaseType> = []
     if (isWaterType) {
         if (
             !getAllNeighbours(order.start).includes(order.finish) //au dela des voisins
             || (order.start[0] === "S" && order.finish[0] === "S") //si on tente d'aller d'un secteur à l'autre
         ) throw new AuthorizingError(`Hors de la portée de la pièce (>1)`)
     } else {
-        let path = computePath(order.start, order.finish, isWaterType)
+        path = computePath(order.start, order.finish, isWaterType)
         console.log('path', path)
 
         //check de la portée
@@ -48,4 +47,5 @@ export default function authorizeOrder(order: OrderType, pieces: Array<PieceItem
 
     console.log("Ordre autorisé ✅")
     currentPiece!.case = order.finish
+    return path
 }

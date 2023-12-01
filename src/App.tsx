@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import grille from "./media/grilleCoords.png";
 import "./table.css";
 import CheckOrder from "./OrdersChecking";
 import authorizeOrder from "./OrdersAuthorizing";
 import names from "./names.json"
+import gridPoints from "./gridPoints.json"
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type NineToTwelve = 9 | 10 | 11 | 12;
@@ -53,8 +54,13 @@ export default function Table() {
       type: "CR",
       case: "S12",
     },
+    {
+      color: "green",
+      type: "C",
+      case: "VHQ",
+    },
   ]);
-  const [isMenuToggeled, setIsMenuToggeled] = useState(false);
+  const [isMenuToggeled, setIsMenuToggeled] = useState(true);
 
   const [debugErrorMessage, setDebugErrorMessage] = useState<string | null>();
 
@@ -64,6 +70,14 @@ export default function Table() {
   const [debugStart, setDebugStart] = useState("");
   const [debugFinish, setDebugFinish] = useState("");
   const firstInputRef = useRef<HTMLInputElement>(null);
+  
+  const plateauRef = useRef<HTMLDivElement>(null)
+  const [plateauWidth, setPlateauWidth] = useState(0);
+  const [trajet, setTrajet] = useState("");
+
+  useEffect(() => {
+    setPlateauWidth(plateauRef.current!.offsetWidth)
+  }, [])
 
   function handleDebugOrder() {
     setDebugPiece("");
@@ -72,7 +86,15 @@ export default function Table() {
     try {
       console.log(`%c === Ordre de débug envoyé : ${debugColor} | ${debugPiece} | ${debugStart} | ${debugFinish} ===`, 'background: #666')
       const order = CheckOrder(debugColor, debugPiece.trim(), debugStart.trim(), debugFinish.trim());
-      authorizeOrder(order, pieces);
+      let path = authorizeOrder(order, pieces);
+
+      //tracher le cheming
+      path.unshift(order.start)
+      path.push(order.finish)
+      let trajetX = path.map((tile) => gridPoints.find((f) => f.name === tile)!.x)
+      let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
+      
+      setTrajet(trajetX.map((x, y) => `${x* (1/18) * plateauWidth}, ${trajetY[y]* (1/18) * plateauWidth}`).join(" "))
 
       setLogs(
         [
@@ -94,6 +116,12 @@ export default function Table() {
 
   return (
     <div className="table">
+      <svg>
+        <polyline points={trajet}/>
+        {/* {gridPoints.map((tile, i) => (
+          <circle key={tile.name} r="6" cx={`${tile.x * (1/18) * plateauWidth}px`} cy={`${tile.y * (1/18) * plateauWidth}px`} onMouseOver={() => {console.log(tile.name)}} />
+        ))} */}
+      </svg>
       <div
         className={`menuToggeler ${!isMenuToggeled && "closed"}`}
         onMouseEnter={() => setIsMenuToggeled(!isMenuToggeled)}
@@ -199,10 +227,11 @@ export default function Table() {
         <div className="jaune"></div>
         <div className="vert"></div>
       </div>
-      <div className="plateau">
+      <div className="plateau" ref={plateauRef}>
         <img src={grille} alt="grille" />
       </div>
-      <div className="orders"></div>
+      <div className="orders">
+      </div>
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}
         {logs.map((log) => (
