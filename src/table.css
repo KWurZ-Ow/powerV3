@@ -24,16 +24,21 @@ svg {
   height: calc(100vh - (var(--gridGap) * 2));
 }
 
-polyline,
-circle {
+polyline {
   fill: none;
   stroke: lime;
   stroke-width: 2;
   transform: translate(calc(var(--reservesWidth) + var(--gridGap)), 0);
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 2s ease-in-out forwards;
+  animation-delay: 10s;
 }
-circle:hover{
-  stroke: red;
-  fill: red;
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .table {

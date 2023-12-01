@@ -94,7 +94,8 @@ export default function Table() {
       let trajetX = path.map((tile) => gridPoints.find((f) => f.name === tile)!.x)
       let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
       
-      setTrajet(trajetX.map((x, y) => `${x* (1/18) * plateauWidth}, ${trajetY[y]* (1/18) * plateauWidth}`).join(" "))
+      setTrajet(trajetX.map((x, y) => `${x * (plateauWidth/18)}, ${trajetY[y] * (plateauWidth/18)}`).join(" "))
+      
 
       setLogs(
         [
@@ -117,10 +118,7 @@ export default function Table() {
   return (
     <div className="table">
       <svg>
-        <polyline points={trajet}/>
-        {/* {gridPoints.map((tile, i) => (
-          <circle key={tile.name} r="6" cx={`${tile.x * (1/18) * plateauWidth}px`} cy={`${tile.y * (1/18) * plateauWidth}px`} onMouseOver={() => {console.log(tile.name)}} />
-        ))} */}
+        <polyline className="trajet" points={trajet}/>
       </svg>
       <div
         className={`menuToggeler ${!isMenuToggeled && "closed"}`}
