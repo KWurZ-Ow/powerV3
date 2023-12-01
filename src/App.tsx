@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import grille from "./media/grilleCoords.png";
 import "./table.css";
 import CheckOrder from "./OrdersChecking";
-import executeOrder from "./OrdersHandeling";
+import authorizeOrder from "./OrdersAuthorizing";
 import names from "./names.json"
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -72,7 +72,7 @@ export default function Table() {
     try {
       console.log(`%c === Ordre de débug envoyé : ${debugColor} | ${debugPiece} | ${debugStart} | ${debugFinish} ===`, 'background: #666')
       const order = CheckOrder(debugColor, debugPiece.trim(), debugStart.trim(), debugFinish.trim());
-      executeOrder(order, pieces);
+      authorizeOrder(order, pieces);
 
       setLogs(
         [
@@ -81,7 +81,7 @@ export default function Table() {
       );
     } catch (error: any) {
       if (error.name === "CheckingError") console.log("Ordre incorrect ❌")
-      if (error.name === "HandelingError") console.log("Ordre refusé ❌")
+      if (error.name === "AuthorizingError") console.log("Ordre révoqué ❌")
       console.error(error.message);
       // console.error(error.stack)
       setDebugErrorMessage(error.message)
