@@ -74,6 +74,7 @@ export default function Table() {
   const plateauRef = useRef<HTMLDivElement>(null)
   const [plateauWidth, setPlateauWidth] = useState(0);
   const [trajet, setTrajet] = useState("");
+  const [isTrajetDrawing, setIsTrajetDrawing] = useState(false);
 
   useEffect(() => {
     setPlateauWidth(plateauRef.current!.offsetWidth)
@@ -95,7 +96,10 @@ export default function Table() {
       let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
       
       setTrajet(trajetX.map((x, y) => `${x * (plateauWidth/18)}, ${trajetY[y] * (plateauWidth/18)}`).join(" "))
-
+      setIsTrajetDrawing(true)
+      setTimeout(() => {
+        setIsTrajetDrawing(false)
+      }, 2000);
 
       setLogs(
         [
@@ -118,7 +122,7 @@ export default function Table() {
   return (
     <div className="table">
       <svg>
-        <polyline className="trajet" points={trajet}/>
+        <polyline className={`${isTrajetDrawing && "drawing"}`} points={trajet}/>
       </svg>
       <div
         className={`menuToggeler ${!isMenuToggeled && "closed"}`}

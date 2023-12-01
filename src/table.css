@@ -29,10 +29,12 @@ polyline {
   stroke: lime;
   stroke-width: 2;
   transform: translate(calc(var(--reservesWidth) + var(--gridGap)), 0);
+}
+
+.drawing {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: dash 2s ease-in-out forwards;
-  animation-delay: 10s;
 }
 
 @keyframes dash {
