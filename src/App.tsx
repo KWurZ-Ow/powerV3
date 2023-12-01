@@ -95,7 +95,7 @@ export default function Table() {
       let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
       
       setTrajet(trajetX.map((x, y) => `${x * (plateauWidth/18)}, ${trajetY[y] * (plateauWidth/18)}`).join(" "))
-      
+
 
       setLogs(
         [
