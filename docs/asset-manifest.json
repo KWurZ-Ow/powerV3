@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/powerV3/static/css/main.4dfb4014.css",
-    "main.js": "/powerV3/static/js/main.c016512b.js",
+    "main.css": "/powerV3/static/css/main.f2465775.css",
+    "main.js": "/powerV3/static/js/main.c7018041.js",
     "static/js/787.31b1c40f.chunk.js": "/powerV3/static/js/787.31b1c40f.chunk.js",
     "static/media/plateau.jpg": "/powerV3/static/media/plateau.c4c8e67503eead0f4816.jpg",
     "static/media/grilleCoords.png": "/powerV3/static/media/grilleCoords.cb2335b39ceeeaff6e6f.png",
     "index.html": "/powerV3/index.html",
-    "main.4dfb4014.css.map": "/powerV3/static/css/main.4dfb4014.css.map",
-    "main.c016512b.js.map": "/powerV3/static/js/main.c016512b.js.map",
+    "main.f2465775.css.map": "/powerV3/static/css/main.f2465775.css.map",
+    "main.c7018041.js.map": "/powerV3/static/js/main.c7018041.js.map",
     "787.31b1c40f.chunk.js.map": "/powerV3/static/js/787.31b1c40f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4dfb4014.css",
-    "static/js/main.c016512b.js"
+    "static/css/main.f2465775.css",
+    "static/js/main.c7018041.js"
   ]
 }
