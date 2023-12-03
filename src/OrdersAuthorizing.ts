@@ -12,7 +12,7 @@ class AuthorizingError extends Error {
 
 export default function authorizeOrder(order: OrderType, pieces: Array<PieceItemType>) {
     let isWaterType: boolean = ["D", "CR"].includes(order.piece)
-    let isGroundType: Boolean = ["S", "R", "T", "A"].includes(order.piece)
+    let isGroundType: boolean = ["S", "R", "T", "A"].includes(order.piece)
 
     //check l'existence de la pièce
     let currentPiece = pieces.find(objet => objet.color === order.color && objet.case === order.start)

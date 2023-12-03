@@ -46,7 +46,7 @@ export function computePath(start: CaseType, finish: CaseType, isWaterType: bool
     let tilesCalculated: Array<PathfindGrid> = []
     while (true) {
         //trouver la tuile avec le plus petit coût
-        let currentTile: PathfindGrid = tilesToCalculate[0]
+        let currentTile: PathfindGrid = tilesToCalculate.find(f => f.type !== "forbidden")!
         tilesToCalculate.forEach((tile) => {
             if (tile.distTo + tile.distFrom < currentTile.distFrom + currentTile.distTo && tile.type !== "forbidden") {
                 currentTile = tile

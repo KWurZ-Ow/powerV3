@@ -13,10 +13,9 @@ class CheckingError extends Error {
 }
 
 const isPiece = (item: string): boolean => ["S", "T", "C", "D", "R", "A", "B", "CR"].includes(item)
-const isCase = (item: string) => item.match(/^(([VJBR]([0-8]||HQ))||(S([1-9]|1[0-2]))||(I[XNSEW]))$/)
+export const isCase = (item: string) => item.match(/^(([VJBR]([0-8]||HQ))||(S([1-9]|1[0-2]))||(I[XNSEW]))$/)
 
 export default function CheckOrder(color: string, piece: string, start: string, finish: string): OrderType {
-    if (!piece || !start || !finish) throw new CheckingError(`Un des champs n'est pas renseigné`)
     if (start.charAt(0) === "E") {
         //type d'ordre = échange de pièces
 

@@ -1,7 +1,7 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import grille from "./media/grilleCoords.png";
 import "./table.css";
-import CheckOrder from "./OrdersChecking";
+import CheckOrder, { isCase } from "./OrdersChecking";
 import authorizeOrder from "./OrdersAuthorizing";
 import names from "./names.json"
 import gridPoints from "./gridPoints.json"
@@ -70,7 +70,7 @@ export default function Table() {
   const [debugStart, setDebugStart] = useState("");
   const [debugFinish, setDebugFinish] = useState("");
   const firstInputRef = useRef<HTMLInputElement>(null);
-  
+
   const plateauRef = useRef<HTMLDivElement>(null)
   const [plateauWidth, setPlateauWidth] = useState(0);
   const [trajet, setTrajet] = useState("");
@@ -80,7 +80,12 @@ export default function Table() {
     setPlateauWidth(plateauRef.current!.offsetWidth)
   }, [])
 
+  useEffect(() => {
+    if (isCase(debugFinish)) handleDebugOrder()
+  }, [debugFinish])
+
   function handleDebugOrder() {
+    if (!debugColor || !debugPiece || !debugStart || !debugFinish) return
     setDebugPiece("");
     setDebugStart("");
     setDebugFinish("");
@@ -94,12 +99,10 @@ export default function Table() {
       path.push(order.finish)
       let trajetX = path.map((tile) => gridPoints.find((f) => f.name === tile)!.x)
       let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
-      
-      setTrajet(trajetX.map((x, y) => `${x * (plateauWidth/18)}, ${trajetY[y] * (plateauWidth/18)}`).join(" "))
+
+      setTrajet(trajetX.map((x, y) => `${x * (plateauWidth / 18)}, ${trajetY[y] * (plateauWidth / 18)}`).join(" "))
       setIsTrajetDrawing(true)
-      setTimeout(() => {
-        setIsTrajetDrawing(false)
-      }, 2000);
+      setIsTrajetDrawing(false)
 
       setLogs(
         [
@@ -121,8 +124,17 @@ export default function Table() {
 
   return (
     <div className="table">
-      <svg>
-        <polyline className={`${isTrajetDrawing && "drawing"}`} points={trajet}/>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+        {gridPoints.map((point) => <polygon className="gridHover" points={point.hixbox} onClick={() => { setDebugFinish(point.name) }} />)}
+        <polyline className={`${isTrajetDrawing && "drawing"}`} points={trajet} />
+        {pieces.map((piece) => <circle r={15} fill={piece.color} key={piece.case + piece.color + piece.type}
+          onClick={() => {
+            setDebugColor(piece.color)
+            setDebugStart(piece.case)
+            setDebugPiece(piece.type)
+          }}
+          cx={gridPoints.find(f => f.name === piece.case)!.x * (plateauWidth / 18)}
+          cy={gridPoints.find(f => f.name === piece.case)!.y * (plateauWidth / 18)} />)}
       </svg>
       <div
         className={`menuToggeler ${!isMenuToggeled && "closed"}`}
@@ -233,6 +245,7 @@ export default function Table() {
         <img src={grille} alt="grille" />
       </div>
       <div className="orders">
+        <div className={`errorBubble ${debugErrorMessage && "active"}`} style={{backgroundColor: "red"}}>{debugErrorMessage}</div>
       </div>
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}
