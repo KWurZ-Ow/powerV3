@@ -1,6 +1,6 @@
 /* eslint-disable no-loop-func */
-import { CaseType } from "./App";
-import gridCoords from "./grid.json";
+import { CaseType } from "../pages/Table";
+import gridCoords from "../data/grid.json";
 export interface PathfindGrid {
     id: number
     x: number

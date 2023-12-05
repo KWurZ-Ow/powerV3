@@ -1,7 +1,7 @@
-import { CaseType, PieceItemType, convertName } from "./App";
+import { CaseType, PieceItemType, convertName } from "../pages/Table";
 import { OrderType } from "./OrdersChecking";
 import { computePath, getAllNeighbours } from "./Pathfinder";
-import piecesValues from "./piecesValues.json"
+import piecesValues from "../data/piecesValues.json"
 
 class AuthorizingError extends Error {
     constructor(message: string) {

@@ -171,7 +171,7 @@ circle:hover{
   border: none;
 }
 
-.menu .radio {
+.radio {
   border: none;
   height: 40px;
   display: flex;
@@ -180,11 +180,11 @@ circle:hover{
   padding: 0 5px 0 5px;
 }
 
-.menu .radio input {
+.radio input {
   display: none;
 }
 
-.menu .radio label {
+.radio label {
   width: 20px;
   height: 20px;
   border-radius: 2px;
@@ -192,23 +192,23 @@ circle:hover{
   transition: 0.3s;
 }
 
-.menu .radio input:checked+label {
+.radio input:checked+label {
   box-shadow: inset black 1px 1px 4px;
 }
 
-.menu .radio label:nth-of-type(1) {
+.radio label:nth-of-type(1) {
   background-color: var(--colorGreenMain);
 }
 
-.menu .radio label:nth-of-type(2) {
+.radio label:nth-of-type(2) {
   background-color: var(--colorBlueMain);
 }
 
-.menu .radio label:nth-of-type(3) {
+.radio label:nth-of-type(3) {
   background-color: var(--colorYellowMain);
 }
 
-.menu .radio label:nth-of-type(4) {
+.radio label:nth-of-type(4) {
   background-color: var(--colorRedMain);
 }
 

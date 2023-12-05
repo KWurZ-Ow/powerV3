@@ -1,6 +1,5 @@
 {
   "name": "powerV3",
-  "homepage": "https://kwurz-ow.github.io/powerV3",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -12,8 +11,11 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "react": "^18.2.0",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1",
     "react-scripts": "5.0.1",
+    "socket.io-client": "^4.7.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
