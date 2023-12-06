@@ -8,6 +8,9 @@
 #prod a côté
 /annex
 
+#build fiels
+/build
+
 # testing
 /coverage
 

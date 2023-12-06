@@ -30,7 +30,7 @@ export default function Home() {
 
 
     return <div className="home">
-        <h1>Power Version 3</h1>
+        <h1>Power Version 3 avec gh-pages</h1>
         <ul>
             {listTables.map((table: any) => <li key={table._id}>
                 <Link to={`../powerV3/table/${table.name}`}>{table.name}</Link>
