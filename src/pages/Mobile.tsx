@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client'
 import "../app.css";
+import { useParams } from 'react-router-dom';
 
 export default function Mobile() {
-    const [socket, setSocket] = useState<Socket | null>(null);
+    const { id: tableId } = useParams()
+    const [socket, setSocket] = useState<Socket | null>();
+    const [table, setTable] = useState<any>()
     const [color, setColor] = useState("")
 
     useEffect(() => {
-        const s = io('http://localhost:3001')
+        const s = io('https://powerdatabase.adaptable.app/')
         setSocket(s)
 
         return () => {
@@ -16,37 +19,40 @@ export default function Mobile() {
     }, [])
 
     useEffect(() => {
-        if (color === "") return
+        if (!tableId) return
 
-        socket?.emit("register", color)
-    }, [color, socket])
+        socket?.on("tableUpdated", updatedTable => {
+            console.log('updatedTable', updatedTable)
+            setTable(updatedTable)
+        })
+
+        socket?.emit("joinTable", tableId, (response: any) => {
+            setTable(response)
+        })
+    }, [socket, tableId])
+
+    useEffect(() => {
+        if (color === "" || !tableId) return
+
+        socket?.emit("register", tableId, color)
+    }, [color, socket, tableId])
+
+    if (!table) return <h1>Scanne le QR code</h1>
 
     return <div className='mobile'>
-        <h1>Power Mobile</h1>
+        <h1>Power V3</h1>
+        <h2>Bienvenue sur la table "{table.name}"</h2>
         {color === "" ? <>
-
-            <p>Quelle couleur es-tu ?</p>
-            <div className="radio">
-                <input type="radio" id="green" name="color" />
-                <label
-                    htmlFor="green"
-                    onClick={() => setColor("green")}
-                ></label>
-                <input type="radio" id="blue" name="color" />
-                <label
-                    htmlFor="blue"
-                    onClick={() => setColor("blue")}
-                ></label>
-                <input type="radio" id="yellow" name="color" />
-                <label
-                    htmlFor="yellow"
-                    onClick={() => setColor("yellow")}
-                ></label>
-                <input type="radio" id="red" name="color" />
-                <label
-                    htmlFor="red"
-                    onClick={() => setColor("red")}
-                ></label>
+            <p>Quel joueur est-tu ?</p>
+            <div className="playersContainer">
+                {table.players.map((player: any) => <div
+                    className={`playerItem ${player.color}MainBackground ${player.socketId !== "" && "picked"}`}
+                    key={player.color}
+                    onClick={() => setColor(player.color)}
+                >
+                    <span>{player.name}</span>
+                </div>
+                )}
             </div>
         </> :
             <p>Ok, salut {color} !</p>}

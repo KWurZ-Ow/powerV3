@@ -6,7 +6,7 @@ import authorizeOrder from "../components/OrdersAuthorizing";
 import names from "../data/names.json"
 import gridPoints from "../data/gridPoints.json"
 import { io, Socket } from 'socket.io-client'
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type NineToTwelve = 9 | 10 | 11 | 12;
@@ -39,7 +39,7 @@ export function convertName(name: NameType) {
 }
 export default function Table() {
   const { id: tableId } = useParams()
-  const [logs, setLogs] = useState<Array<LogType>>([{_id: "1", color: "grey", content: "Cette table n'existe pas"}]);
+  const [logs, setLogs] = useState<Array<LogType>>([{ _id: "1", color: "grey", content: "Cette table n'existe pas" }]);
   const [pieces, setPieces] = useState<Array<PieceItemType>>([]);
   const [isMenuToggeled, setIsMenuToggeled] = useState(true);
 
@@ -59,34 +59,26 @@ export default function Table() {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    setPlateauWidth(plateauRef.current!.offsetWidth) //todo rework
-    
-    const s = io('http://localhost:3001')
+    if (plateauRef.current) setPlateauWidth(plateauRef.current!.offsetWidth) //TODO rework
+
+    const s = io('https://powerdatabase.adaptable.app/')
     setSocket(s)
-    
+
     return () => {
       s.disconnect()
     }
   }, [])
-  
+
   useEffect(() => {
     if (!socket || !tableId) return
     
-    socket.once("loadPieces", (pieces: Array<any>, logs: Array<any>) => {
-      console.log('logs', logs)
-      setPieces(pieces)
-      setLogs(logs)
+    socket.emit("joinTable", tableId, (data:any) => {
+      setPieces(data.pieces)
+      setLogs(data.logs)
     })
-
-    socket.emit("joinTable", tableId)
   }, [socket, tableId])
 
-  function createTable(name: string) {
-    console.log('socket', socket)
-    socket?.emit("createTable", name)
-  }
-
-  function saveData() {
+  function saveData(pieces:Array<PieceItemType>, logs:Array<LogType>) {
     socket?.emit("saveData", pieces, logs)
   }
 
@@ -117,19 +109,18 @@ export default function Table() {
       let trajetY = path.map((tile) => gridPoints.find((f) => f.name === tile)!.y)
 
       setTrajet(trajetX.map((x, y) => `${x * (plateauWidth / 18)}, ${trajetY[y] * (plateauWidth / 18)}`).join(" "))
-      saveData()
       setIsTrajetDrawing(true)
       setTimeout(() => {
         setIsTrajetDrawing(false)
-      }, 0);//todo mettre a 2000
+      }, 0);//TODO mettre a 2000
 
-      setLogs(
-        [{
-          color: `${order.color}`,
-          content: `Déplacement d'un ${convertName(order.piece)} ${convertName(order.color)} de ${order.start} à ${order.finish}`,
-          _id: generateEpochString()
-        }].concat(logs)
-      );
+      let newLogs = [{
+        color: `${order.color}`,
+        content: `Déplacement d'un ${convertName(order.piece)} ${convertName(order.color)} de ${order.start} à ${order.finish}`,
+        _id: generateEpochString()
+      }].concat(logs)
+      setLogs(newLogs);
+      saveData(pieces, newLogs)
     } catch (error: any) {
       if (error.name === "CheckingError") console.log("Ordre incorrect ❌")
       if (error.name === "AuthorizingError") console.log("Ordre révoqué ❌")
@@ -267,11 +258,12 @@ export default function Table() {
       </div>
       <div className="orders">
         <div className={`errorBubble ${debugErrorMessage && "active"}`} style={{ backgroundColor: "red" }}>{debugErrorMessage}</div>
+        <Link to={"/home"}>Retour</Link>
       </div>
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}
         {logs.map((log) => (
-          <div key={log._id} className="log grey">
+          <div key={log._id} className="log grey" style={{color: log.color}}>
             {log.content}
           </div>
         ))}

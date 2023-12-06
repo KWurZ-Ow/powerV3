@@ -1,3 +1,5 @@
+/* XXX Global */
+
 body {
   --colorBackgroundMain: rgba(144, 88, 235, 0.24);
   --colorBackgroundSecond: rgba(209, 209, 209, 0.178);
@@ -16,6 +18,71 @@ body {
   overflow: hidden;
 }
 
+.greenMainBackground {
+  background-color: var(--colorGreenMain);
+}
+
+.blueMainBackground {
+  background-color: var(--colorBlueMain);
+}
+
+.yellowMainBackground {
+  background-color: var(--colorYellowMain);
+}
+
+.redMainBackground {
+  background-color: var(--colorRedMain);
+}
+
+.table::after,
+.home::after,
+.mobile::after {
+  content: "";
+  background: url("./media/bg.jpg");
+  filter: blur(10px);
+  position: absolute;
+  top: -10vh;
+  left: -10vh;
+  width: 120vw;
+  height: 120svh;
+  z-index: -1;
+  background-size: cover;
+}
+
+
+/* XXX Table */
+
+
+.table {
+  height: calc(100vh - (var(--gridGap) * 2));
+  width: calc(100vw - (var(--gridGap) * 2));
+  padding: var(--gridGap);
+  display: grid;
+  gap: var(--gridGap);
+  grid-template-columns: 2fr calc(100vh - (var(--gridGap) * 2)) 3fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "a b c"
+    "a b d";
+}
+
+
+/* XXX Plateau */
+
+
+.plateau {
+  grid-area: b;
+  background: url("./media/plateau.jpg");
+  background-size: contain;
+  border-radius: 20px;
+}
+
+.plateau img {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+}
+
 svg {
   position: absolute;
   top: var(--gridGap);
@@ -24,7 +91,7 @@ svg {
   height: calc(100vh - (var(--gridGap) * 2));
 }
 
-.gridHover{
+.gridHover {
   fill: rgba(0, 0, 0, 0);
 }
 
@@ -38,7 +105,7 @@ polyline {
   stroke-width: 2;
 }
 
-circle:hover{
+circle:hover {
   filter: brightness(.9);
   cursor: pointer;
 }
@@ -55,31 +122,9 @@ circle:hover{
   }
 }
 
-.table {
-  height: calc(100vh - (var(--gridGap) * 2));
-  width: calc(100vw - (var(--gridGap) * 2));
-  padding: var(--gridGap);
-  display: grid;
-  gap: var(--gridGap);
-  grid-template-columns: 2fr calc(100vh - (var(--gridGap) * 2)) 3fr;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas:
-    "a b c"
-    "a b d";
-}
 
-.table::after {
-  content: "";
-  background: url("./media/bg.jpg");
-  filter: blur(10px);
-  position: absolute;
-  top: -10vh;
-  left: -10vh;
-  width: 120vw;
-  height: 120vh;
-  z-index: -1;
-  background-size: cover;
-}
+/* XXX Menu */
+
 
 .menuToggeler {
   width: 2vw;
@@ -171,59 +216,9 @@ circle:hover{
   border: none;
 }
 
-.radio {
-  border: none;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 0 5px 0 5px;
-}
 
-.radio input {
-  display: none;
-}
+/* XXX Reserves */
 
-.radio label {
-  width: 20px;
-  height: 20px;
-  border-radius: 2px;
-  border: 0.5px solid black;
-  transition: 0.3s;
-}
-
-.radio input:checked+label {
-  box-shadow: inset black 1px 1px 4px;
-}
-
-.radio label:nth-of-type(1) {
-  background-color: var(--colorGreenMain);
-}
-
-.radio label:nth-of-type(2) {
-  background-color: var(--colorBlueMain);
-}
-
-.radio label:nth-of-type(3) {
-  background-color: var(--colorYellowMain);
-}
-
-.radio label:nth-of-type(4) {
-  background-color: var(--colorRedMain);
-}
-
-.plateau {
-  grid-area: b;
-  background: url("./media/plateau.jpg");
-  background-size: contain;
-  border-radius: 20px;
-}
-
-.plateau img {
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-}
 
 .reserves {
   grid-area: a;
@@ -239,6 +234,9 @@ circle:hover{
   background-color: var(--colorBackgroundMain);
 }
 
+
+/* XXX Orders */
+
 .orders {
   grid-area: c;
   height: 100%;
@@ -246,6 +244,9 @@ circle:hover{
   border-radius: 20px;
   background-color: var(--colorBackgroundMain);
 }
+
+
+/* XXX Logs */
 
 .logContainer {
   grid-area: d;
@@ -301,4 +302,43 @@ circle:hover{
   color: var(--colorGreyMain);
   text-align: center;
   font-style: italic;
+}
+
+
+/* XXX Mobile */
+
+
+.mobile {
+  overflow: hidden;
+  margin: 15px;
+}
+
+.mobile::after {
+  transform: scale(1.2)
+}
+
+.playersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: fit-content;
+}
+
+.playerItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 15px 5px 10px;
+  border-radius: 10px;
+}
+
+.picked {
+  filter: grayscale(0.7);
+}
+
+.picked::after {
+  content: "❌ Déjà pris";
+  position: absolute;
+  right: -100%;
 }
