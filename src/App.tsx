@@ -12,10 +12,10 @@ import { isMobile } from 'react-device-detect';
 export default function App() {
   return <Router>
     <Routes>
-      <Route path="*" element={<Navigate to={isMobile ? "/mobile/null" : "/home"} />}></Route>
-      <Route path="home" Component={Home}></Route>
-      <Route path="table/:id" Component={Table}></Route>
-      <Route path="mobile/:id" Component={Mobile}></Route>
+      <Route path="/powerV3/*" element={<Navigate to={isMobile ? "/powerV3/mobile/null" : "/powerV3/home"} />}></Route>
+      <Route path="/powerV3/home" Component={Home}></Route>
+      <Route path="/powerV3/table/:id" Component={Table}></Route>
+      <Route path="/powerV3/mobile/:id" Component={Mobile}></Route>
     </Routes>
   </Router>
 }

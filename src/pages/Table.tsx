@@ -258,7 +258,7 @@ export default function Table() {
       </div>
       <div className="orders">
         <div className={`errorBubble ${debugErrorMessage && "active"}`} style={{ backgroundColor: "red" }}>{debugErrorMessage}</div>
-        <Link to={"/home"}>Retour</Link>
+        <Link to={"/powerV3/home"}>Retour</Link>
       </div>
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}

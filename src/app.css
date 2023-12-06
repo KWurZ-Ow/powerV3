@@ -266,6 +266,7 @@ circle:hover {
 }
 
 ::-webkit-scrollbar-thumb {
+  height: 50px;
   background: var(--colorGreyMain);
   border-radius: 10px;
 }

@@ -33,7 +33,7 @@ export default function Home() {
         <h1>Power Version 3</h1>
         <ul>
             {listTables.map((table: any) => <li key={table._id}>
-                <Link to={`../table/${table.name}`}>{table.name}</Link>
+                <Link to={`../powerV3/table/${table.name}`}>{table.name}</Link>
             </li>)}
         </ul>
     </div>
