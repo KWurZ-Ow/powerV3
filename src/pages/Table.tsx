@@ -7,6 +7,7 @@ import names from "../data/names.json"
 import gridPoints from "../data/gridPoints.json"
 import { io, Socket } from 'socket.io-client'
 import { Link, useParams } from "react-router-dom";
+import { childProps } from "../App";
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type NineToTwelve = 9 | 10 | 11 | 12;
@@ -37,7 +38,7 @@ export function convertName(name: NameType) {
     return name
   }
 }
-export default function Table() {
+export default function Table({ ioUrl }: childProps) {
   const { id: tableId } = useParams()
   const [logs, setLogs] = useState<Array<LogType>>([{ _id: "1", color: "grey", content: "Cette table n'existe pas" }]);
   const [pieces, setPieces] = useState<Array<PieceItemType>>([]);
@@ -61,18 +62,18 @@ export default function Table() {
   useEffect(() => {
     if (plateauRef.current) setPlateauWidth(plateauRef.current!.offsetWidth) //TODO rework
 
-    const s = io('https://powerdatabase.adaptable.app/')
+    const s = io(ioUrl)
     setSocket(s)
 
     return () => {
       s.disconnect()
     }
-  }, [])
+  }, [ioUrl])
 
   useEffect(() => {
     if (!socket || !tableId) return
     
-    socket.emit("joinTable", tableId, (data:any) => {
+    socket.emit("joinTable", tableId, false, (data:any) => {
       setPieces(data.pieces)
       setLogs(data.logs)
     })
@@ -263,7 +264,7 @@ export default function Table() {
       <div className="logContainer">
         {logs.length === 0 && <div className="log grey">Pas de logs</div>}
         {logs.map((log) => (
-          <div key={log._id} className="log grey" style={{color: log.color}}>
+          <div key={log._id} className={`log ${log.color}`}>
             {log.content}
           </div>
         ))}

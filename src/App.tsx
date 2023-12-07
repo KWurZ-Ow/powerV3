@@ -2,20 +2,26 @@ import Mobile from "./pages/Mobile";
 import Table from "./pages/Table";
 import Home from "./pages/Home";
 import {
-  BrowserRouter as Router,
   Route,
   Routes,
-  Navigate
+  Navigate,
+  HashRouter
 } from "react-router-dom";
 import { isMobile } from 'react-device-detect';
+export interface childProps {
+  ioUrl: string;
+}
 
 export default function App() {
-  return <Router>
+  const isProdBackend = true
+  const ioUrl = isProdBackend ? "https://powerdatabase.adaptable.app/" : "http://localhost:3000/"
+
+  return <HashRouter>
     <Routes>
-      <Route path="/powerV3/*" element={<Navigate to={isMobile ? "/powerV3/mobile/null" : "/powerV3/home"} />}></Route>
-      <Route path="/powerV3/home" Component={Home}></Route>
-      <Route path="/powerV3/table/:id" Component={Table}></Route>
-      <Route path="/powerV3/mobile/:id" Component={Mobile}></Route>
+      <Route path="*" element={<Navigate to={isMobile ? "mobile/null" : "/home"} />}></Route>
+      <Route path="home" element={<Home ioUrl={ioUrl} />}></Route>
+      <Route path="table/:id" element={<Table ioUrl={ioUrl} />}></Route>
+      <Route path="mobile/:id" element={<Mobile ioUrl={ioUrl} />}></Route>
     </Routes>
-  </Router>
+  </HashRouter>
 }

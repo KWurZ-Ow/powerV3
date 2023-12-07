@@ -67,7 +67,7 @@ body {
 }
 
 
-/* XXX Plateau */
+/* Plateau */
 
 
 .plateau {
@@ -123,7 +123,7 @@ circle:hover {
 }
 
 
-/* XXX Menu */
+/* Menu */
 
 
 .menuToggeler {
@@ -217,7 +217,7 @@ circle:hover {
 }
 
 
-/* XXX Reserves */
+/* Reserves */
 
 
 .reserves {
@@ -235,7 +235,7 @@ circle:hover {
 }
 
 
-/* XXX Orders */
+/* Orders */
 
 .orders {
   grid-area: c;
@@ -246,7 +246,7 @@ circle:hover {
 }
 
 
-/* XXX Logs */
+/* Logs */
 
 .logContainer {
   grid-area: d;
@@ -342,4 +342,110 @@ circle:hover {
   content: "❌ Déjà pris";
   position: absolute;
   right: -100%;
+}
+
+
+/* XXX Home */
+
+
+
+.home {
+  padding: 30px;
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: auto 1fr;
+  justify-items: center;
+  gap: 30px;
+  height: 80svh;
+  max-width: 1500px;
+  margin: auto;
+}
+
+.home .title {
+  grid-column: 1 / span 2;
+  text-align: center;
+}
+
+.gamesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.gameJoiner {
+  width: 90%;
+  height: fit-content;
+  background-color: var(--colorBackgroundMain);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gameJoiner .gameItem {
+  align-self: end;
+}
+
+.cardsContainer {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.playerCard{
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 80px;
+  animation: slideIn 0.5s ease-in-out;
+}
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-33%);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.qrcode {
+  border-radius: 15px;
+  padding: 10px;
+  background-color: white;
+}
+
+.gameItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 30px 5px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: black;
+}
+.gameItem:hover {
+  cursor: pointer;
+  filter: brightness(1.2);
+}
+.gameItem:nth-of-type(1n) {
+  background-color: var(--colorYellowMain);
+}
+.gameItem:nth-of-type(2n) {
+  background-color: var(--colorGreenMain);
+}
+.gameItem:nth-of-type(3n) {
+  background-color: var(--colorBlueMain);
+}
+.gameItem:nth-of-type(1) {
+  background-color: var(--colorBackgroundMain);
+  color: white;
 }

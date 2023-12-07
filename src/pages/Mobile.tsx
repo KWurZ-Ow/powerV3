@@ -2,21 +2,22 @@ import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client'
 import "../app.css";
 import { useParams } from 'react-router-dom';
+import { childProps } from "../App";
 
-export default function Mobile() {
+export default function Mobile({ ioUrl }: childProps) {
     const { id: tableId } = useParams()
     const [socket, setSocket] = useState<Socket | null>();
     const [table, setTable] = useState<any>()
     const [color, setColor] = useState("")
 
     useEffect(() => {
-        const s = io('https://powerdatabase.adaptable.app/')
+        const s = io(ioUrl)
         setSocket(s)
 
         return () => {
             s.disconnect()
         }
-    }, [])
+    }, [ioUrl])
 
     useEffect(() => {
         if (!tableId) return
@@ -26,7 +27,7 @@ export default function Mobile() {
             setTable(updatedTable)
         })
 
-        socket?.emit("joinTable", tableId, (response: any) => {
+        socket?.emit("joinTable", tableId, false, (response: any) => {
             setTable(response)
         })
     }, [socket, tableId])
