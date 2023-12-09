@@ -335,13 +335,25 @@ circle:hover {
 }
 
 .picked {
-  filter: grayscale(0.7);
+  filter: grayscale(0);
 }
 
 .picked::after {
-  content: "❌ Déjà pris";
+  content: "";
   position: absolute;
-  right: -100%;
+  /* right: -100%; */
+  background: repeating-linear-gradient(
+    45deg,
+    #44444480,
+    #44444480 10px,
+    #62626280 10px,
+    #62626280 20px
+  );
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 
@@ -392,13 +404,11 @@ circle:hover {
 
 .cardsContainer {
   display: flex;
-  gap: 15px;
   align-items: center;
 }
 
 .playerCard{
   color: black;
-  padding: 10px;
   border-radius: 10px;
   align-self: stretch;
   display: flex;
@@ -406,6 +416,16 @@ circle:hover {
   justify-content: space-evenly;
   align-items: center;
   width: 80px;
+  margin-right: -100px;
+  opacity: 0;
+  padding: 10px;
+  transition: 0.5s ease-in-out;
+  transition-property: margin;
+}
+.playerCard.visible {
+  margin-right: 0;
+  opacity: 1;
+  margin-left: 15px;
   animation: slideIn 0.5s ease-in-out;
 }
 @keyframes slideIn {

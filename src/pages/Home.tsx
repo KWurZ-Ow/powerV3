@@ -45,7 +45,7 @@ export default function Home({ ioUrl }: childProps) {
 
     return <div className="home">
         <div className="title">
-            <h1>Power Version 3</h1>
+            <h1>⚡ Power Version 3 !!!</h1>
             <h3>Bienvenue, rejoignez ou créez une table</h3>
         </div>
         <div className="gamesContainer">
@@ -65,7 +65,10 @@ export default function Home({ ioUrl }: childProps) {
                     setJoinGame(table.name)
                     setCreateGame(false)
                     setPlayers([])
-                    socket?.emit("joinTable", table.name, true, () => { setJoinLoaded(true) })
+                    socket?.emit("joinTable", table.name, true, (table:any) => { 
+                        setJoinLoaded(true)
+                        setPlayers(table.players)
+                    })
                 }}>
                 <p>{table.name}</p>
                 <p>{new Date(table.creationDate).toLocaleDateString("fr-FR", {
@@ -77,19 +80,18 @@ export default function Home({ ioUrl }: childProps) {
         </div>
         {joinGame !== "" && <div className="gameJoiner">
             <div>
-                <h2>{ joinLoaded ? `Lancement de la table ${joinGame}` : "Chargement..." }</h2>
+                <h2>{ joinLoaded ? `Préparation de la table ${joinGame}` : "Chargement..." }</h2>
                 <h3>Reconnectez les téléphones avec le QR code</h3>
             </div>
-            <div className="cardsContainer">
+            {joinLoaded && <div className="cardsContainer">
                 <QRCode className="qrcode" value={`https://kwurz-ow.github.io/powerV3/#mobile/${joinGame}`}/>
                 {players.map((player) => {
-                    if (player.socketId === "") return null
-                    return <div className={`playerCard ${player.color}MainBackground`}>
+                    return <div className={`playerCard ${player.color}MainBackground ${player.socketId !== "" ? "visible" : ""}`}>
                         <img src={playerIcon} alt="" />
                         {player.name}
                     </div>
                 })}
-            </div>
+            </div>}
             <Link className="gameItem" style={{width: "fit-content"}} to={`/table/${joinGame}`}>{`Rejoindre ${joinGame}`}</Link>
         </div>}
         {createGame && <div className="gameJoiner"></div>}

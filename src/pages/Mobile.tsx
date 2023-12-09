@@ -22,11 +22,6 @@ export default function Mobile({ ioUrl }: childProps) {
     useEffect(() => {
         if (!tableId) return
 
-        socket?.on("tableUpdated", updatedTable => {
-            console.log('updatedTable', updatedTable)
-            setTable(updatedTable)
-        })
-
         socket?.emit("joinTable", tableId, false, (response: any) => {
             setTable(response)
         })
@@ -34,6 +29,14 @@ export default function Mobile({ ioUrl }: childProps) {
 
     useEffect(() => {
         if (color === "" || !tableId) return
+        socket?.on("tableUpdated", updatedTable => {
+            setTable(updatedTable)
+            console.log('players', updatedTable.players)
+            // if (updatedTable.players.find((f: any) => f.color === color)?.socketId === "") {
+            //     console.log("reset state color")
+            //     setColor("")
+            // }
+        })
 
         socket?.emit("register", tableId, color)
     }, [color, socket, tableId])
@@ -41,7 +44,7 @@ export default function Mobile({ ioUrl }: childProps) {
     if (!table) return <h1>Scanne le QR code</h1>
 
     return <div className='mobile'>
-        <h1>Power V3</h1>
+        <h1>Power V3 !!!</h1>
         <h2>Bienvenue sur la table "{table.name}"</h2>
         {color === "" ? <>
             <p>Quel joueur est-tu ?</p>
@@ -49,7 +52,7 @@ export default function Mobile({ ioUrl }: childProps) {
                 {table.players.map((player: any) => <div
                     className={`playerItem ${player.color}MainBackground ${player.socketId !== "" && "picked"}`}
                     key={player.color}
-                    onClick={() => setColor(player.color)}
+                    onClick={() => { if (player.socketId === "") setColor(player.color) }}
                 >
                     <span>{player.name}</span>
                 </div>
