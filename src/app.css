@@ -356,7 +356,17 @@ circle:hover {
 }
 
 .mobile::after {
-  transform: scale(1.2)
+  transform: scale(1.2);
+}
+
+.mobile.green::after {
+  filter: hue-rotate(277deg) blur(20px);
+}
+.mobile.yellow::after {
+  filter: hue-rotate(197deg) brightness(2.6) blur(20px);
+}
+.mobile.red::after {
+  filter: hue-rotate(157deg) blur(20px);
 }
 
 .playersContainer {
@@ -400,6 +410,62 @@ circle:hover {
   border-radius: 10px;
 }
 
+/* inputs */
+
+.mobile input {
+  width: 30%;
+}
+
+.mobile input.focus {
+  outline: 1px solid orange;
+}
+
+/*  keyboard  */
+
+.simple-keyboard.myTheme1 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(34, 34, 34, 0.8);
+  border-radius: 0;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  transform: translateY(100%);
+  transition: transform 0.5s;
+}
+
+.simple-keyboard.myTheme1.active {
+  transform: translateY(0);
+}
+
+.simple-keyboard.myTheme1 .hg-button {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.hg-functionBtn {
+  background: hsla(228, 93%, 25%, 0.5) !important;
+}
+
+.hg-button.keyGrey {
+  background: hsla(228, 15%, 20%, 0.5) !important;
+}
+.hg-button.keyLightgrey {
+  background: hsla(228, 15%, 10%, 0.5) !important;
+}
+
+.simple-keyboard.myTheme1 .hg-button:active {
+  background: #1c4995;
+  color: white;
+}
+
+#root .simple-keyboard.myTheme1 + .simple-keyboard-preview {
+  background: #1c4995;
+}
 
 /* XXX Home */
 
