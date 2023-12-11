@@ -37,7 +37,7 @@ export default function Home({ ioUrl }: childProps) {
         socket.emit("seekTables", (response: any) => {
             setListTables(response)
         })
-        socket.on("tableUpdated", (response) => {
+        socket.on("tableUpdated", (response, wipe) => {
             console.log(response.players)
             setPlayers(response.players)
         })

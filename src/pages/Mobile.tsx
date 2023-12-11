@@ -22,21 +22,22 @@ export default function Mobile({ ioUrl }: childProps) {
     useEffect(() => {
         if (!tableId) return
 
+        socket?.on("tableUpdated", (updatedTable, wipe) => {
+            setTable(updatedTable)
+            console.log('players', updatedTable.players)
+            if (wipe) {
+                console.log("reset state color")
+                setColor("")
+            }
+        })
         socket?.emit("joinTable", tableId, false, (response: any) => {
+            console.log("connected")
             setTable(response)
         })
     }, [socket, tableId])
 
     useEffect(() => {
         if (color === "" || !tableId) return
-        socket?.on("tableUpdated", updatedTable => {
-            setTable(updatedTable)
-            console.log('players', updatedTable.players)
-            // if (updatedTable.players.find((f: any) => f.color === color)?.socketId === "") {
-            //     console.log("reset state color")
-            //     setColor("")
-            // }
-        })
 
         socket?.emit("register", tableId, color)
     }, [color, socket, tableId])
@@ -59,6 +60,9 @@ export default function Mobile({ ioUrl }: childProps) {
                 )}
             </div>
         </> :
-            <p>Ok, salut {color} !</p>}
+            <>
+                <p>Ok, salut {color} !</p>
+                <button onClick={() => { setColor("") }}>Retour</button>
+            </>}
     </div>
 }
