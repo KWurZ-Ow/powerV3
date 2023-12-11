@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client'
 import "../app.css";
 import { useParams } from 'react-router-dom';
 import { childProps } from "../App";
+import playerIcon from "../media/playerIcon.svg"
+import KeyboardWrapper from '../components/KeyboardWrapper';
 
 export default function Mobile({ ioUrl }: childProps) {
     const { id: tableId } = useParams()
@@ -42,12 +44,20 @@ export default function Mobile({ ioUrl }: childProps) {
         socket?.emit("register", tableId, color)
     }, [color, socket, tableId])
 
+    const [input, setInput] = useState("");
+    const keyboard = useRef(null);
+
+    const onChangeInput = (event: ChangeEvent<HTMLInputElement>): void => {
+        const input = event.target.value;
+        setInput(input);
+    };
+
     if (!table) return <h1>Scanne le QR code</h1>
 
     return <div className='mobile'>
         <h1>Power V3 !!!</h1>
-        <h2>Bienvenue sur la table "{table.name}"</h2>
         {color === "" ? <>
+            <h2>Bienvenue sur la table "{table.name}"</h2>
             <p>Quel joueur est-tu ?</p>
             <div className="playersContainer">
                 {table.players.map((player: any) => <div
@@ -55,14 +65,23 @@ export default function Mobile({ ioUrl }: childProps) {
                     key={player.color}
                     onClick={() => { if (player.socketId === "") setColor(player.color) }}
                 >
+                    <img src={playerIcon} alt="" />
                     <span>{player.name}</span>
                 </div>
                 )}
             </div>
         </> :
             <>
-                <p>Ok, salut {color} !</p>
-                <button onClick={() => { setColor("") }}>Retour</button>
+                <h2>Sur la table "{table.name}"</h2>
+                <input
+                    value={input}
+                    placeholder={"Tap on the virtual keyboard to start"}
+                    onChange={e => onChangeInput(e)}
+                />
+                <div style={{ color: "black" }}>
+                    <KeyboardWrapper keyboardRef={keyboard as any} onChange={setInput} />
+                </div>
+
             </>}
     </div>
 }

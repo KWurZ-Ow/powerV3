@@ -112,8 +112,8 @@ function getNeighbours(x: number, y: number, grid: Array<PathfindGrid>) {
 }
 
 export function getAllNeighbours(center:CaseType){
-    let centerTiles = caseToGridTile(center)
     createGrid(true)
+    let centerTiles = caseToGridTile(center)
     let neighbours:Array<PathfindGrid> = []
     centerTiles.forEach(tile => {
         neighbours = neighbours.concat(getNeighbours(tile.x, tile.y, grid).filter(item => !neighbours.includes(item)))
