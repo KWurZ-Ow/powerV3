@@ -13,7 +13,7 @@ export interface childProps {
 }
 
 export default function App() {
-  const isProdBackend = true
+  const isProdBackend = false
   const ioUrl = isProdBackend ? "https://powerdatabase.adaptable.app/" : "http://localhost:3000/"
 
   return <HashRouter>

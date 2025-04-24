@@ -52,6 +52,7 @@ export default function Home({ ioUrl }: childProps) {
             <div className="gameItem" onClick={() => {
                 setCreateGame(true)
                 setJoinGame("")
+                socket?.emit("createTable", "Test")
             }}>
                 <p>Créer une nouvelle table</p>
                 <p>{"->"}</p>
