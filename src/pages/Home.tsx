@@ -45,9 +45,9 @@ export default function Home({ ioUrl }: childProps) {
 
     return <div className="home">
         <div className="title">
-            <h1>⚡ Power Version 3 !!! (update 2026)</h1>
+            <h1>⚡ Power Version 3 !!!</h1>
             <h3>Bienvenue, rejoignez ou créez une table</h3>
-            <h2>Test url : {window.location.href}</h2>
+            {/* <h2>Test url : {window.location.href}</h2> */}
         </div>
         <div className="gamesContainer">
             <div className="gameItem" onClick={() => {
