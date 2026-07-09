@@ -5,7 +5,7 @@ import CheckOrder from "../components/OrdersChecking";
 import authorizeOrder from "../components/OrdersAuthorizing";
 import names from "../data/names.json"
 import gridPoints from "../data/gridPoints.json"
-import { io, Socket } from 'socket.io-client'
+import { io, Socket } from "socket.io-client"
 import { Link, useParams } from "react-router-dom";
 import { childProps } from "../App";
 

@@ -14,6 +14,7 @@ export interface childProps {
 
 export default function App() {
   const isProdBackend = false
+  console.log('%csrc\App.tsx:17 window.location.href', 'color: #007acc;', window.location.href);
   const ioUrl = isProdBackend ? "https://powerdatabase.adaptable.app/" : "http://localhost:3000/"
 
   return <HashRouter>
