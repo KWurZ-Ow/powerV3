@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
 import { childProps } from "../App";
 import { ColorType } from "./Table";
 import QRCode from "qrcode.react";
@@ -14,28 +13,19 @@ type PlayerType = {
     order: Array<any>,
 }
 
-export default function Home({ ioUrl }: childProps) {
-    const [socket, setSocket] = useState<Socket | null>(null);
-    const [listTables, setListTables] = useState([])
-    const [createGame, setCreateGame] = useState(false)
-    const [joinGame, setJoinGame] = useState("")
+export default function TableLobby({ backUrl: ioUrl, frontUrl: frontUrl, socket: socket, setLogs, setPieces }: childProps) {
+    const [isCreatingGame, setIsCreatingGame] = useState(false)
+    const [isTableLoaded, setIsTableLoaded] = useState(false)
+    const [tableJoining, setTableJoining] = useState("")
+    const [tables, setTables] = useState([])
     const [players, setPlayers] = useState<Array<PlayerType>>([])
-    const [joinLoaded, setJoinLoaded] = useState(false)
 
-    useEffect(() => {
-        const s = io(ioUrl)
-        setSocket(s)
-
-        return () => {
-            s.disconnect()
-        }
-    }, [ioUrl])
 
     useEffect(() => {
         if (!socket) return
 
         socket.emit("seekTables", (response: any) => {
-            setListTables(response)
+            setTables(response)
         })
         socket.on("tableUpdated", (response, wipe) => {
             console.log(response.players)
@@ -46,30 +36,31 @@ export default function Home({ ioUrl }: childProps) {
     return <div className="home">
         <div className="title">
             <h1>⚡ Power Version 3 !!!</h1>
-            <h3>Bienvenue, rejoignez ou créez une table</h3>
-            {/* <h2>Test url : {window.location.href}</h2> */}
+            <h3>{socket?.connected ? "Bienvenue, rejoignez ou créez une table" : "Connexion au serveur..."}</h3>
         </div>
-        <div className="gamesContainer">
+        {tables.length > 0 && <div className="gamesContainer">
             <div className="gameItem" onClick={() => {
-                setCreateGame(true)
-                setJoinGame("")
+                setIsCreatingGame(true)
+                setTableJoining("")
                 socket?.emit("createTable", "Test")
             }}>
                 <p>Créer une nouvelle table</p>
                 <p>{"->"}</p>
             </div>
 
-            {listTables.map((table: any) => <div
+            {tables.map((table: any) => <div
                 key={table._id}
                 className="gameItem"
                 onClick={() => {
-                    setJoinLoaded(false)
-                    setJoinGame(table.name)
-                    setCreateGame(false)
+                    setIsTableLoaded(false)
+                    setTableJoining(table.name)
+                    setIsCreatingGame(false)
                     setPlayers([])
                     socket?.emit("joinTable", table.name, true, (table:any) => { 
-                        setJoinLoaded(true)
+                        setIsTableLoaded(true)
                         setPlayers(table.players)
+                        setPieces(table.pieces)
+                        setLogs(table.logs)
                     })
                 }}>
                 <p>{table.name}</p>
@@ -79,23 +70,23 @@ export default function Home({ ioUrl }: childProps) {
                     year: "numeric",
                 })}</p>
             </div>)}
-        </div>
-        {joinGame !== "" && <div className="gameJoiner">
+        </div>}
+        {tableJoining !== "" && <div className="gameJoiner">
             <div>
-                <h2>{ joinLoaded ? `Préparation de la table ${joinGame}` : "Chargement..." }</h2>
+                <h2>{ isTableLoaded ? `Préparation de la table ${tableJoining}` : "Chargement..." }</h2>
                 <h3>Reconnectez les téléphones avec le QR code</h3>
             </div>
-            {joinLoaded && <div className="cardsContainer">
-                <QRCode className="qrcode" value={`https://kwurz-ow.github.io/powerV3/#mobile/${joinGame}`}/>
-                {players.map((player) => {
-                    return <div className={`playerCard ${player.color}MainBackground ${player.socketId !== "" ? "visible" : ""}`}>
+            {isTableLoaded && <div className="cardsContainer">
+                <QRCode className="qrcode" value={`${frontUrl}/#mobile/${tableJoining}`}/>
+                {players.map((player, index) => {
+                    return <div key={index} className={`playerCard ${player.color}MainBackground ${player.socketId !== "" ? "visible" : ""}`}>
                         <img src={playerIcon} alt="" />
                         {player.name}
                     </div>
                 })}
             </div>}
-            <Link className="gameItem" style={{width: "fit-content"}} to={`/table/${joinGame}`}>{`Rejoindre ${joinGame}`}</Link>
+            <Link className="gameItem" style={{width: "fit-content"}} to={`/table/${tableJoining}`}>{`Rejoindre ${tableJoining}`}</Link>
         </div>}
-        {createGame && <div className="gameJoiner"></div>}
+        {isCreatingGame && <div className="gameJoiner"></div>}
     </div>
 }

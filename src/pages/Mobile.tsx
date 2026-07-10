@@ -7,7 +7,7 @@ import playerIcon from "../media/playerIcon.svg"
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 
-export default function Mobile({ ioUrl }: childProps) {
+export default function Mobile({ backUrl: ioUrl }: childProps) {
     const { id: tableId } = useParams()
     const [socket, setSocket] = useState<Socket | null>();
     const [table, setTable] = useState<any>()

@@ -8,6 +8,7 @@ import gridPoints from "../data/gridPoints.json"
 import { io, Socket } from "socket.io-client"
 import { Link, useParams } from "react-router-dom";
 import { childProps } from "../App";
+import TableLobby from "./TableLobby";
 
 type OneToHeight = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 type NineToTwelve = 9 | 10 | 11 | 12;
@@ -38,7 +39,7 @@ export function convertName(name: NameType) {
     return name
   }
 }
-export default function Table({ ioUrl }: childProps) {
+export default function Table({ backUrl, frontUrl }: childProps) {
   const { id: tableId } = useParams()
   const [logs, setLogs] = useState<Array<LogType>>([{ _id: "1", color: "grey", content: "Cette table n'existe pas" }]);
   const [pieces, setPieces] = useState<Array<PieceItemType>>([]);
@@ -57,27 +58,21 @@ export default function Table({ ioUrl }: childProps) {
   const [plateauWidth, setPlateauWidth] = useState(0);
   const [trajet, setTrajet] = useState("");
   const [isTrajetDrawing, setIsTrajetDrawing] = useState(false);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
   useEffect(() => {
-    if (plateauRef.current) setPlateauWidth(plateauRef.current!.offsetWidth) //TODO rework
-
-    const s = io(ioUrl)
+    const s = io(backUrl)
     setSocket(s)
 
     return () => {
       s.disconnect()
     }
-  }, [ioUrl])
+  }, [backUrl])
 
   useEffect(() => {
-    if (!socket || !tableId) return
-    
-    socket.emit("joinTable", tableId, false, (data:any) => {
-      setPieces(data.pieces)
-      setLogs(data.logs)
-    })
-  }, [socket, tableId])
+    if (!tableId) return
+    plateauRef.current && setPlateauWidth(plateauRef.current.offsetWidth) //FIXME rework this
+  }, [tableId])
 
   function saveData(pieces:Array<PieceItemType>, logs:Array<LogType>) {
     socket?.emit("saveData", pieces, logs)
@@ -135,140 +130,147 @@ export default function Table({ ioUrl }: childProps) {
     firstInputRef.current!.focus();
   }
 
-  return (
-    <div className="table">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
-        {gridPoints.map((point) => <polygon key={point.name} className="gridHover" points={point.hixbox} onClick={() => { handleSectorClick(point.name) }} />)}
-        <polyline className={`${isTrajetDrawing && "drawing"}`} points={trajet} />
-        {pieces.map((piece) => <circle r={15} fill={piece.color} key={piece.case + piece.color + piece.unite}
-          onClick={() => {
-            setDebugColor(piece.color)
-            setDebugStart(piece.case)
-            setDebugPiece(piece.unite)
-          }}
-          cx={gridPoints.find(f => f.name === piece.case)!.x * (plateauWidth / 18)}
-          cy={gridPoints.find(f => f.name === piece.case)!.y * (plateauWidth / 18)} />)}
-      </svg>
-      <div
-        className={`menuToggeler ${!isMenuToggeled && "closed"}`}
-        onMouseEnter={() => { setIsMenuToggeled(!isMenuToggeled) }}
-      ></div>
-      <div className={`menu ${isMenuToggeled && "closed"}`}>
-        <h2>Débug</h2>
-        <div className="logOrders">
-          <div className={`errorBubble ${debugErrorMessage && "active"}`}>{debugErrorMessage}</div>
+  if (!tableId) {
+    return (
+      <TableLobby backUrl={backUrl} frontUrl={frontUrl} socket={socket} setPieces={setPieces} setLogs={setLogs} />
+    )
+  } else {
+    console.log(plateauWidth);
+    return (
+      <div className="table">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900">
+          {gridPoints.map((point) => <polygon key={point.name} className="gridHover" points={point.hixbox} onClick={() => { handleSectorClick(point.name) }} />)}
+          <polyline className={`${isTrajetDrawing && "drawing"}`} points={trajet} />
+          {pieces.map((piece, index) => <circle r={15} fill={piece.color} key={index}
+            onClick={() => {
+              setDebugColor(piece.color)
+              setDebugStart(piece.case)
+              setDebugPiece(piece.unite)
+            }}
+            cx={gridPoints.find(f => f.name === piece.case)!.x * (plateauWidth / 18)}
+            cy={gridPoints.find(f => f.name === piece.case)!.y * (plateauWidth / 18)} />)}
+        </svg>
+        <div
+          className={`menuToggeler ${!isMenuToggeled && "closed"}`}
+          onMouseEnter={() => { setIsMenuToggeled(!isMenuToggeled) }}
+        ></div>
+        <div className={`menu ${isMenuToggeled && "closed"}`}>
+          <h2>Débug</h2>
+          <div className="logOrders">
+            <div className={`errorBubble ${debugErrorMessage && "active"}`}>{debugErrorMessage}</div>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Couleur</th>
+                  <th>Pièce</th>
+                  <th>Départ</th>
+                  <th>Arrivée</th>
+                </tr>
+                <tr>
+                  <td
+                    className="radio"
+                    onClick={() => firstInputRef.current!.focus()}
+                  >
+                    <input type="radio" id="green" name="color" />
+                    <label
+                      htmlFor="green"
+                      onClick={() => setDebugColor("green")}
+                    ></label>
+                    <input type="radio" id="blue" name="color" />
+                    <label
+                      htmlFor="blue"
+                      onClick={() => setDebugColor("blue")}
+                    ></label>
+                    <input type="radio" id="yellow" name="color" />
+                    <label
+                      htmlFor="yellow"
+                      onClick={() => setDebugColor("yellow")}
+                    ></label>
+                    <input type="radio" id="red" name="color" />
+                    <label
+                      htmlFor="red"
+                      onClick={() => setDebugColor("red")}
+                    ></label>
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={debugPiece}
+                      ref={firstInputRef}
+                      onChange={(e) => {
+                        setDebugPiece(e.target.value.toUpperCase());
+                      }}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={debugStart}
+                      onChange={(e) => {
+                        setDebugStart(e.target.value.toUpperCase());
+                      }}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={debugFinish}
+                      onChange={(e) => {
+                        setDebugFinish(e.target.value.toUpperCase());
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleDebugOrder(debugColor, debugPiece, debugStart, debugFinish);
+                        if (e.key === "Tab") {
+                          e.preventDefault();
+                          firstInputRef.current!.focus();
+                        }
+                      }}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Pièces</h3>
           <table>
             <tbody>
               <tr>
                 <th>Couleur</th>
-                <th>Pièce</th>
-                <th>Départ</th>
-                <th>Arrivée</th>
+                <th>Type</th>
+                <th>Case</th>
               </tr>
-              <tr>
-                <td
-                  className="radio"
-                  onClick={() => firstInputRef.current!.focus()}
-                >
-                  <input type="radio" id="green" name="color" />
-                  <label
-                    htmlFor="green"
-                    onClick={() => setDebugColor("green")}
-                  ></label>
-                  <input type="radio" id="blue" name="color" />
-                  <label
-                    htmlFor="blue"
-                    onClick={() => setDebugColor("blue")}
-                  ></label>
-                  <input type="radio" id="yellow" name="color" />
-                  <label
-                    htmlFor="yellow"
-                    onClick={() => setDebugColor("yellow")}
-                  ></label>
-                  <input type="radio" id="red" name="color" />
-                  <label
-                    htmlFor="red"
-                    onClick={() => setDebugColor("red")}
-                  ></label>
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={debugPiece}
-                    ref={firstInputRef}
-                    onChange={(e) => {
-                      setDebugPiece(e.target.value.toUpperCase());
-                    }}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={debugStart}
-                    onChange={(e) => {
-                      setDebugStart(e.target.value.toUpperCase());
-                    }}
-                  />
-                </td>
-                <td>
-                  <input
-                    type="text"
-                    value={debugFinish}
-                    onChange={(e) => {
-                      setDebugFinish(e.target.value.toUpperCase());
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleDebugOrder(debugColor, debugPiece, debugStart, debugFinish);
-                      if (e.key === "Tab") {
-                        e.preventDefault();
-                        firstInputRef.current!.focus();
-                      }
-                    }}
-                  />
-                </td>
-              </tr>
+              {pieces.map((piece, i) => (
+                <tr key={i}>
+                  <td>{piece.color}</td>
+                  <td>{piece.unite}</td>
+                  <td>{piece.case}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-        <h3>Pièces</h3>
-        <table>
-          <tbody>
-            <tr>
-              <th>Couleur</th>
-              <th>Type</th>
-              <th>Case</th>
-            </tr>
-            {pieces.map((piece, i) => (
-              <tr key={i}>
-                <td>{piece.color}</td>
-                <td>{piece.unite}</td>
-                <td>{piece.case}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="reserves">
+          <div className="rouge"></div>
+          <div className="bleu"></div>
+          <div className="jaune"></div>
+          <div className="vert"></div>
+        </div>
+        <div className="plateau" ref={plateauRef}>
+          <img src={grille} alt="grille" />
+        </div>
+        <div className="orders">
+          <div className={`errorBubble ${debugErrorMessage && "active"}`} style={{ backgroundColor: "red" }}>{debugErrorMessage}</div>
+          <Link to={"/powerV3/home"}>Retour</Link>
+        </div>
+        <div className="logContainer">
+          {logs.length === 0 && <div className="log grey">Pas de logs</div>}
+          {logs.map((log) => (
+            <div key={log._id} className={`log ${log.color}`}>
+              {log.content}
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="reserves">
-        <div className="rouge"></div>
-        <div className="bleu"></div>
-        <div className="jaune"></div>
-        <div className="vert"></div>
-      </div>
-      <div className="plateau" ref={plateauRef}>
-        <img src={grille} alt="grille" />
-      </div>
-      <div className="orders">
-        <div className={`errorBubble ${debugErrorMessage && "active"}`} style={{ backgroundColor: "red" }}>{debugErrorMessage}</div>
-        <Link to={"/powerV3/home"}>Retour</Link>
-      </div>
-      <div className="logContainer">
-        {logs.length === 0 && <div className="log grey">Pas de logs</div>}
-        {logs.map((log) => (
-          <div key={log._id} className={`log ${log.color}`}>
-            {log.content}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    );
+  }
 }
