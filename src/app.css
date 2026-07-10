@@ -1,4 +1,4 @@
-/* XXX Global */
+/* SECTION Global */
 
 body {
   --colorBackgroundMain: rgba(144, 88, 235, 0.24);
@@ -50,7 +50,8 @@ body {
 }
 
 
-/* XXX Table */
+/* !SECTION  */
+/* SECTION Table */
 
 
 .table {
@@ -67,7 +68,7 @@ body {
 }
 
 
-/* Plateau */
+/*  ANCHOR Plateau */
 
 
 .plateau {
@@ -123,7 +124,7 @@ circle:hover {
 }
 
 
-/* Menu */
+/* ANCHOR Menu */
 
 
 .menuToggeler {
@@ -257,7 +258,7 @@ circle:hover {
   background-color: var(--colorRedMain);
 }
 
-/* Reserves */
+/* ANCHOR Reserves */
 
 
 .reserves {
@@ -275,7 +276,7 @@ circle:hover {
 }
 
 
-/* Orders */
+/* ANCHOR Orders */
 
 .orders {
   grid-area: c;
@@ -286,7 +287,7 @@ circle:hover {
 }
 
 
-/* Logs */
+/* ANCHOR Logs */
 
 .logContainer {
   grid-area: d;
@@ -346,7 +347,8 @@ circle:hover {
 }
 
 
-/* XXX Mobile */
+/* !SECTION  */
+/* SECTION Mobile */
 
 
 .mobile {
@@ -410,7 +412,7 @@ circle:hover {
   border-radius: 10px;
 }
 
-/* inputs */
+/* ANCHOR inputs */
 
 .mobile input {
   width: 30%;
@@ -420,7 +422,7 @@ circle:hover {
   outline: 1px solid orange;
 }
 
-/*  keyboard  */
+/*  ANCHOR keyboard  */
 
 .simple-keyboard.myTheme1 {
   position: absolute;
@@ -467,8 +469,9 @@ circle:hover {
   background: #1c4995;
 }
 
-/* XXX Home */
 
+/* !SECTION  */
+/* SECTION Home */
 
 
 .home {
@@ -579,3 +582,5 @@ circle:hover {
   background-color: var(--colorBackgroundMain);
   color: white;
 }
+
+/* !SECTION  */
