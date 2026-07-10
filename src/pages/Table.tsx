@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import grille from "../media/grilleCoords.png";
 import "../app.css";
-import CheckOrder from "../components/OrdersChecking";
-import authorizeOrder from "../components/OrdersAuthorizing";
+import CheckOrder from "../functions/OrdersChecking";
+import authorizeOrder from "../functions/OrdersAuthorizing";
 import names from "../data/names.json"
 import gridPoints from "../data/gridPoints.json"
 import { io, Socket } from "socket.io-client"

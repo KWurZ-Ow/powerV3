@@ -1,6 +1,6 @@
 import { CaseType, PieceItemType, convertName } from "../pages/Table";
 import { OrderType } from "./OrdersChecking";
-import { computePath, getAllNeighbours } from "./Pathfinder";
+import { computePath, getNeighbours } from "./Pathfinder";
 import piecesValues from "../data/piecesValues.json"
 
 class AuthorizingError extends Error {
@@ -20,21 +20,22 @@ export default function authorizeOrder(order: OrderType, pieces: Array<PieceItem
 
     //finish autorisé
     if (isWaterType) {
-        if (order.finish.match(/[VBJR]4/)) throw new AuthorizingError(`Un ${convertName(order.piece)} ne peut pas aller sur une tuile 4`)
+        if (order.finish.match(/[VBJR]4/)) throw new AuthorizingError(`Un ${convertName(order.piece)} ne peut pas se rendre sur une tuile centrale`)
     } else {
-        if (order.finish.match(/^S/)) throw new AuthorizingError(`Un ${convertName(order.piece)} ne peut pas aller sur une tuile S`)
+        if (order.finish.match(/^S/)) throw new AuthorizingError(`Un ${convertName(order.piece)} ne peut pas se rendre sur un secteur maritime`)
     }
-    if (order.start === order.finish) throw new AuthorizingError(`On ne peut pas se déplacer de 0 cases !`)
+
+    if (order.start === order.finish) throw new AuthorizingError(`Un déplacement doit être au minimum d'une case !`)
 
     //😱 pathfinding
     let path:Array<CaseType> = []
     if (isWaterType) {
         if (
-            !getAllNeighbours(order.start).includes(order.finish) //au dela des voisins
+            !getNeighbours(order.start).includes(order.finish) //au dela des voisins
             || (order.start[0] === "S" && order.finish[0] === "S") //si on tente d'aller d'un secteur à l'autre
         ) throw new AuthorizingError(`Hors de la portée de la pièce (>1)`)
     } else {
-        path = computePath(order.start, order.finish, isWaterType)
+        path = computePath(order.start, order.finish)
         console.log('path', path)
 
         //check de la portée

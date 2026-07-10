@@ -13,7 +13,7 @@ export interface childProps {
 }
 
 export default function App() {
-  const isProdBackend = true
+  const isProdBackend = false
   const ioUrl = isProdBackend ? "https://powerdatabase-pcoe.onrender.com" : "http://localhost:3001/"
 
   return <HashRouter>
